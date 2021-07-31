@@ -9,5 +9,9 @@
 
 
 (rf/reg-sub :display-columns
-            (fn [_ _]
-              []))
+            (fn [db _]
+              (keys (first (:data db))))) ;TODO improve
+
+(rf/reg-sub :data
+            (fn [db _]
+              (:data db)))

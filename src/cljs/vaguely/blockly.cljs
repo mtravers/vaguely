@@ -29,3 +29,21 @@
   (prn :update)
   (bo/define-blocks (defblocks/block-defs))
   (bo/update-toolbox (bo/toolbox (defblocks/toolbox-def))))
+
+(rf/reg-sub
+ :compact-all
+ (fn [db _]
+   (:compact-all db)))
+
+(rf/reg-event-db
+ :blockly-event
+ (fn [db _]
+   (let [struct (bo/workspace-selected-xml)
+         compact (bo/compact struct)
+         compact-all (bo/compact (bo/workspace-xml))]
+     (assoc db
+            :struct struct
+            :compact compact
+            :compact-all compact-all
+            ;; TODO compute vega spec for display here maybe
+            ))))
