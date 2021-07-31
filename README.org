@@ -1,0 +1,30 @@
+* Vaguely
+
+Status; copying over bits of Mr. Frieze and Enflame
+
+* To run
+
+lein figwheel
+open localhost:3456
+
+
+* Deploy to Hyperphor
+
+[not yet]
+
+
+git push hyperphor master
+
+Will show at
+http://hyperphor.com/mrfrieze/resources/public/index.html
+
+Note: for now, you have to do 
+lein cljsbuild once
+on hyperphor....should automate that.
+
+
+* Multitool
+Library is checked into mvn for deploy.
+
+lein localrepo install -r mvn ~/.m2/repository/org/parkerici/multitool/0.0.3/multitool-0.0.3.jar org.parkerici/multitool 0.0.3
+

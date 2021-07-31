@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+  <head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Vaguely</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+  </head>
+  <body style="height: 100%;">
+    <noscript>
+      vaguely is a JavaScript app. Please enable JavaScript to continue.
+    </noscript>
+    <div class="container mw-100 mh-100 h-100">
+      <div class="row" style="height: 100%;"> 
+	<div class="col-6">
+	  <!-- TODO I want 100% height, but apparently that requires a PhD in CSS -->
+	  <div id="blocklyArea" style=height:100%; min-width:100%; width: 100%;"></div>
+	  <div id="blocklyDiv" style="position: absolute;"></div>
+	</div>
+	<div class="col-6">
+	  <div id="drawing" style="height: 100%; width 100%"></div>
+	</div>
+      </div>
+
+      <!-- bottom row -->
+      <div class="row">
+	<div id="debug"></div>
+      </div>
+    </div>
+    <!--  TODO might be useful later -->
+    <!-- <script src="node_modules/@blockly/field-slider/dist/index.js"></script> -->
+
+    <script src="js/compiled/app.js"></script>
+    <script>vaguely.core.init();</script>
+  </body>
+</html>
