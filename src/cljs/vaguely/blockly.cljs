@@ -2,6 +2,7 @@
   (:require [org.parkerici.blockoid.core :as bo]
             cljsjs.blockly.msg.en
             [vaguely.defblocks :as defblocks]
+            [vaguely.vega :as vega]
             [re-frame.core :as rf]
             )
   )
@@ -45,5 +46,5 @@
             :struct struct
             :compact compact
             :compact-all compact-all
-            ;; TODO compute vega spec for display here maybe
+            :vega-spec (vega/generate-vega-spec)
             ))))

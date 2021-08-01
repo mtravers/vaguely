@@ -1,5 +1,6 @@
 (ns vaguely.vega
-  (:require [org.parkerici.multitool.core :as u]
+  (:require [vaguely.canned :as canned] ;TODO probably wants to go through vaguely.data
+            [org.parkerici.multitool.core :as u]
             [re-frame.core :as rf]
             [oz.core :as oz]
             ))
@@ -17,11 +18,20 @@
       1 (first layers)
       {:layer layers})))
 
+(def default-height 500)
+(def default-width 500)
+
 (defmethod vega-spec "layer" [block]
-;  (when (get-in block [:children "data"])
-    {:mark {:type (get-in block [:children "mark"])
-            :tooltip {:content "data"}}
-     :encoding (vega-spec (get-in block [:children "encoding"]))})
+  (when-let [data-block (get-in block [:children "data"])]
+    (let [data (get canned/datasets (get data-block :type))] ;TODO go through vega-spec and support other data blocks
+      (rf/dispatch [:set-data data])
+      {:mark {:type (get-in block [:children "mark"])
+              :tooltip {:content "data"}}
+       :encoding (vega-spec (get-in block [:children "encoding"]))
+       :height default-height
+       :width default-width
+       :data {:values data}
+       })))
 
 (defmethod vega-spec "encoding" [block]
   (assoc (vega-spec (get-in block [:children :next]))
@@ -46,16 +56,13 @@
 (defmethod vega-spec nil [_block]
   {})
 
-(defn- generate-vega-spec
+(defn generate-vega-spec
   []
-  (let [data @(rf/subscribe [:data])
+  (let [; data @(rf/subscribe [:data])    ;TOOD get data from block
         blocks @(rf/subscribe [:compact-all])
         vega-block (u/something #(= "layer" (:type %)) blocks)
         spec (vega-spec vega-block)]
-    (and (not (empty? data))
-         (not (empty? spec))
-         (assoc spec
-                :data {:values data}))))
+    spec))
 
 (defn render
   "React component showing the graph"
