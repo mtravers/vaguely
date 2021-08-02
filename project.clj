@@ -1,13 +1,37 @@
 (defproject vaguely "0.0.1-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.520"]
-                 [org.clojure/core.async "0.6.532"]
+                 #_ [org.clojure/core.async "0.6.532"]
                  [org.parkerici/multitool "0.0.15"]
+
+                 ;; Front end
                  [reagent "0.8.1"]
                  [re-frame "0.10.9"]
                  [org.parkerici/blockoid "0.3.6"]
-                 [testdouble/clojurescript.csv "0.5.1"] 
                  [metasoarous/oz "1.6.0-alpha6"] ;warning: later versions seem to have broken dependencies
+                 [cljs-ajax "0.8.0"]
+
+                 ;; Back end
+
+                 ;; Ring and friends
+                 [org.eclipse.jetty/jetty-client "9.4.12.v20180830"] ;has to match ring version of jetty
+                 [org.eclipse.jetty/jetty-server "9.4.12.v20180830"]
+                 [org.eclipse.jetty/jetty-http "9.4.12.v20180830"]
+                 [org.eclipse.jetty/jetty-util "9.4.12.v20180830"]
+                 [ring "1.8.0"]
+                 [ring/ring-jetty-adapter "1.7.1"]
+                 [ring/ring-defaults "0.3.2"]
+                 [compojure "1.6.1" :exclusions [ring.core ring.codec]]
+                 [ring-middleware-format "0.7.4" :exclusions [javax.xml.bind/jaxb-api]]
+                 [bk/ring-gzip "0.3.0"]
+
+                 ;; Other
+
+                 [clj-http "3.12.1"]
+                 [compojure "1.6.1" :exclusions [ring.core ring.codec]]
+                 [org.clojure/data.csv "0.1.4"]                  
+
+
                  ]
 
   :repositories [["local" {:url ~(str (.toURI (java.io.File. "mvn")))

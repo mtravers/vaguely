@@ -1,5 +1,5 @@
 (ns vaguely.defblocks
-  (:require [vaguely.canned :as canned]
+  (:require [vaguely.data :as data]
             [org.parkerici.multitool.core :as u]
             [re-frame.core :as rf]
             ))
@@ -122,7 +122,7 @@
 
 (def blocks
   (concat (graph-blockdefs)
-          (canned/blockdefs)))
+          (data/blockdefs)))
 
 (defn block-defs []
   blocks)
@@ -169,8 +169,7 @@
 (defn toolbox-def
   []
   `[:toolbox
-    [:category "Data" {}
-     ~@(canned/toolbox)]
+    ~(data/toolbox)
     [:category "Visualization" {}
      [:block "layer" {}
       ;; For some reason displayed order is inverse

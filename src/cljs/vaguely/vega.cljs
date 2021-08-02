@@ -1,5 +1,5 @@
 (ns vaguely.vega
-  (:require [vaguely.canned :as canned] ;TODO probably wants to go through vaguely.data
+  (:require [vaguely.data :as data] 
             [org.parkerici.multitool.core :as u]
             [re-frame.core :as rf]
             [oz.core :as oz]
@@ -23,14 +23,12 @@
 
 (defmethod vega-spec "layer" [block]
   (when-let [data-block (get-in block [:children "data"])]
-    (let [data (get canned/datasets (get data-block :type))] ;TODO go through vega-spec and support other data blocks
-      (rf/dispatch [:set-data data])
       {:mark {:type (get-in block [:children "mark"])
               :tooltip {:content "data"}}
        :encoding (vega-spec (get-in block [:children "encoding"]))
        :height default-height
        :width default-width
-       :data {:values data}
+       :data {:values (data/vega-spec data-block)}
        })))
 
 (defmethod vega-spec "encoding" [block]
