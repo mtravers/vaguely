@@ -1,9 +1,9 @@
 (ns vaguely.data
   (:require [clojure.data.csv :as csv]
             [clojure.java.io :as io]
+            [clojure.string :as str]
             [org.parkerici.multitool.core :as u]
-            [org.parkerici.multitool.cljcore :as ju]
-            )  )
+            ))
 
 (defn read-csv-file [fname & [separator]]
   (with-open [reader (-> fname
@@ -13,6 +13,7 @@
     (doall
      (csv/read-csv reader :separator (or separator \,)))))
 
+;;; TODO strip " %" 
 (defn csv-coerce-value [v]
   (if (empty? v)
     nil
@@ -23,16 +24,17 @@
   (cons (first csv-data)
         (map (fn [row] (map csv-coerce-value row)) (rest csv-data))))
 
-(defn keywordize
+(defn csv-coerce-head
   [head]
   (if (empty? head)
     :__id                               
-    (keyword head)))
+    ;; Vega definitely doesn't like ., not sure about other chars
+    (keyword (str/replace head #"[\.]" "_"))))   ;  ,\(\):
 
 (defn csv-data->maps
   [csv-data]
   (map zipmap
-       (->> (map keywordize (first csv-data)) ;; First row is the header
+       (->> (map csv-coerce-head (first csv-data)) ;; First row is the header
             repeat)
        (rest csv-data)))
 

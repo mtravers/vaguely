@@ -6,8 +6,8 @@
   )
 
 (def source "https://forge.scilab.org/index.php/p/rdataset/source/file/master/csv/datasets/trees.csv")
-(def covid "https://covidtracking.com/data/download/all-states-history.csv")
-
+(def covid "https://covidtracking.com/data/download/all-states-history.csv") ;20K records, a bit much
+(def counties "https://www.worlddata.info/downloads/countries.csv")
 
 
 (def data-color "#e09f3e")            ;TODO elsewhere
@@ -26,19 +26,28 @@
    (canned/blockdefs)))
 
 
-(rf/reg-event-fx
- :set-data-url
- (fn [_ [_ url]]
-   (api/ajax-get "/api/data"
-                 {:url-params {:url url}
-                  :handler (fn [resp]
-                             (rf/dispatch [:set-data (:body resp)]))})
-   {}))
+(defmulti block-data (fn [block] (:type block)))
+
+(defmethod block-data "data-url" [block]
+  (let [url (get-in block [:children "url"])]
+    (rf/dispatch [:get-data-url url])
+    @(rf/subscribe [:data])             ;not sure this will work
+    ))
+  
+(rf/reg-event-db
+ :get-data-url
+ (fn [db [_ url]]
+   (when-not (= (:data-url db) url)
+     (api/ajax-get "/api/data"
+                   {:url-params {:url url}
+                    :handler (fn [resp]
+                               (rf/dispatch [:set-data (:body resp)]))}))
+   (assoc db :data-url url)))
 
 
 (rf/reg-event-db
  :set-data
- (fn [db [_ data]]
+ (fn [db [_  data]]
    (assoc db
           :data data
           :display-columns (keys (first data))))) ;TODO improve

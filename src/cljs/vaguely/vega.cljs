@@ -23,12 +23,13 @@
 
 (defmethod vega-spec "layer" [block]
   (when-let [data-block (get-in block [:children "data"])]
+    (let [data (data/block-data data-block)]
       {:mark {:type (get-in block [:children "mark"])
               :tooltip {:content "data"}}
        :encoding (vega-spec (get-in block [:children "encoding"]))
        :height default-height
        :width default-width
-       :data {:values (data/vega-spec data-block)}
+       :data {:values data}
        })))
 
 (defmethod vega-spec "encoding" [block]
@@ -65,6 +66,7 @@
 (defn render
   "React component showing the graph"
   []
-  (when-let [spec (generate-vega-spec)]
+  (if-let [spec (generate-vega-spec)]
     [:div#graph
-     (oz/view-spec [:vega-lite spec])]))
+     (oz/view-spec [:vega-lite spec])]
+    [:span "wait for it"]))
