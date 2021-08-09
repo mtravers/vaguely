@@ -1,1 +1,1 @@
-web: lein with-profile prod lein run
+web: lein with-profile prod run
