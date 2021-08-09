@@ -3,8 +3,8 @@
    [reagent.core :as reagent]
    [re-frame.core :as rf]
    [vaguely.blockly :as blockly]
-   [vaguely.views :as views]
    [vaguely.config :as config]
+   vaguely.views
    vaguely.data
    [vaguely.vega :as vega]
    ))
@@ -29,7 +29,7 @@
   (dev-setup)
   (mount-root))
 
-(defn init []
+(defn ^:export init []
   (re-frame-init)
   (blockly/init))
 
