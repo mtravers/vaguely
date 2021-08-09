@@ -1,4 +1,4 @@
-(ns org.parkerici.vaguely.server
+(ns vaguely.server
   (:require [vaguely.data :as data]
             [ring.adapter.jetty :as jetty]
             [compojure.core :refer [context routes GET POST]]
@@ -20,7 +20,7 @@
 
 (defn handle-data
   [url]
-  (let [data (data/read-csv-file-maps url)]
+  (let [data (data/read-file-maps url)]
     {:status 200
      :headers {}
      :body data}  

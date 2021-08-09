@@ -1,17 +1,19 @@
 (ns vaguely.data
   (:require [clojure.data.csv :as csv]
             [clojure.java.io :as io]
+            [clojure.data.json :as json]
             [clojure.string :as str]
+            [me.raynes.fs :as fs]
             [org.parkerici.multitool.core :as u]
             ))
 
 (defn read-csv-file [fname & [separator]]
   (with-open [reader (-> fname
                          io/input-stream
-;                         BOMInputStream. ;Removes garbage character
+;;;                         BOMInputStream. ;Removes garbage character
                          io/reader)]
     (doall
-     (csv/read-csv reader :separator (or separator \,)))))
+     (csv/read-csv reader :separator separator))))
 
 ;;; TODO strip " %" 
 (defn csv-coerce-value [v]
@@ -45,4 +47,19 @@
        csv-coerce-values              ;if -s flag is set, we co coerce and then uncoerce, which is inefficient but works
        csv-data->maps))
 
+(defn read-json-file
+  [fname]
+  (with-open [s (io/reader fname)]
+    (json/read s :key-fn csv-coerce-head)))
 
+;;; Fname is really a URL and maybe should be parsed with a proper URL library
+(defn read-file-maps
+  [fname]
+  (let [filetype (fs/extension fname)]
+    (case filetype
+      ".csv" (read-csv-file-maps fname \,)
+      ".tsv" (read-csv-file-maps fname \tab,)
+      ".json" (read-json-file fname)
+      ;; For now, default json, but should be smart
+      (read-json-file fname))))
+        

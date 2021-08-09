@@ -1,10 +1,10 @@
 (defproject vaguely "0.0.1-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.520"]
-                 #_ [org.clojure/core.async "0.6.532"]
                  [org.parkerici/multitool "0.0.15"]
 
                  ;; Front end
+
                  [reagent "0.8.1"]
                  [re-frame "0.10.9"]
                  [org.parkerici/blockoid "0.3.6"]
@@ -29,8 +29,9 @@
 
                  [clj-http "3.12.1"]
                  [compojure "1.6.1" :exclusions [ring.core ring.codec]]
+                 [me.raynes/fs "1.4.6"]
+                 [org.clojure/data.json "0.2.6"]
                  [org.clojure/data.csv "0.1.4"]                  
-
 
                  ]
 

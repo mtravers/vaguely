@@ -27,7 +27,7 @@
   [:point :bar :line :tick :arc :area :boxplot :text])
 
 (def attributes                         ;aka channels. There are more; these seemed like the most useful
-  [:x :y :size :color :opacity :shape :theta :radius :strokeWidth :facet :text :tooltip])
+  [:x :y :size :shape :color :opacity :column :theta :radius :strokeWidth :facet :text :tooltip])
 
 ;;; Count is special (no underlying field) so has its own block. See https://vega.github.io/vega-lite/docs/aggregate.html#ops
 ;;; for complete set, these are the ones that seemed most useful.

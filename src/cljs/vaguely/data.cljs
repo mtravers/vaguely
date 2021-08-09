@@ -25,7 +25,6 @@
     }
    (canned/blockdefs)))
 
-
 (defmulti block-data (fn [block] (:type block)))
 
 (defmethod block-data "data-url" [block]
@@ -34,6 +33,18 @@
     @(rf/subscribe [:data])             ;not sure this will work
     ))
   
+(defmethod block-data "infertility" [block]
+  (rf/dispatch [:set-data (canned/datasets "infertility")])
+  @(rf/subscribe [:data]))
+
+(defmethod block-data "trees" [block]
+  (rf/dispatch [:set-data (canned/datasets "trees")])
+  @(rf/subscribe [:data]))
+
+(defmethod block-data "iris" [block]
+  (rf/dispatch [:set-data (canned/datasets "iris")])
+  @(rf/subscribe [:data]))
+
 (rf/reg-event-db
  :get-data-url
  (fn [db [_ url]]
