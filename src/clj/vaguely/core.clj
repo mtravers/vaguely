@@ -2,7 +2,6 @@
   (:require [vaguely.server :as srv]
             [taoensso.timbre :as log]
             [environ.core :as env]
-            [clojure.tools.trace :as trace]
             )
   (:gen-class))
 
