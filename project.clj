@@ -35,6 +35,7 @@
 
                  ]
 
+
   :repositories [["local" {:url ~(str (.toURI (java.io.File. "mvn")))
                            :checksum :ignore}]]
 
@@ -69,7 +70,7 @@
 
    :prod { }}
 
-  :prep-tasks []
+  :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]
 
   :cljsbuild
   {:builds
