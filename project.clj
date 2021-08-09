@@ -43,6 +43,8 @@
             [lein-localrepo "0.5.4"]    ;for multitool, until its public
             ]
 
+  :main ^:skip-aot vaguely.core
+
   :min-lein-version "2.5.3"
 
   :source-paths ["src/cljc" "src/clj" "src/cljs"]
@@ -62,7 +64,7 @@
                                  org.clojure/clojurescript]]
                    ]
     :plugins      [[lein-figwheel "0.5.19"]]
-;    :source-paths ["dev"]
+                                        ;    :source-paths ["dev"]
     }
 
    :prod { }}
