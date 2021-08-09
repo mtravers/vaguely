@@ -13,6 +13,6 @@
       (let [{:keys [port]} env/env]
         (log/info (format "starting web server on port %s" port))
         (srv/start (u/coerce-numeric port)))
-      (log/info "web server started (presumbably)")
+      (log/info "web server started")
       (catch Exception e
         (log/error e)))))
