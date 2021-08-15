@@ -7,10 +7,10 @@
   (:gen-class))
 
 (defn -main
-  []
+  [& [port]]
   (future
     (try
-      (let [{:keys [port]} env/env]
+      (let [port (or port (:port env/env))]
         (log/info (format "starting web server on port %s" port))
         (srv/start (u/coerce-numeric port)))
       (log/info "web server started")

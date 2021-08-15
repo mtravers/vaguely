@@ -6,6 +6,7 @@
    [vaguely.config :as config]
    vaguely.views
    vaguely.data
+   vaguely.library
    [vaguely.vega :as vega]
    ))
 

@@ -27,3 +27,7 @@
  (fn [db [_ error]]
    (rf/dispatch [:error error])         ;TODO needs a handler
    db))
+
+(defn save-item
+  [item]
+  (ajax-post "/api/save" {:body item}))

@@ -71,7 +71,7 @@
              }
             {:type "field_dropdown"
              :name "type"
-             :options (options [:nominal :ordinal :quantitative]) ;TODO derive dynamically from data
+             :options (options [:nominal :ordinal :quantitative :temporal]) ;TODO derive dynamically from data
              }
             ]}
    {:type "count_encoding"
@@ -184,4 +184,8 @@
      [:block "encoding"]
      [:block "count_encoding" {} [:field "attribute" "size"]]
      [:block "aggregate_encoding"]
-     ]])
+     ]
+    [:category "Library" {}
+     [:button "Browse" [:browse]]
+     [:button "Save" [:save]]]
+    ])

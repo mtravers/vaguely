@@ -23,7 +23,14 @@
                  [ring/ring-defaults "0.3.2"]
                  [compojure "1.6.1" :exclusions [ring.core ring.codec]]
                  [ring-middleware-format "0.7.4" :exclusions [javax.xml.bind/jaxb-api]]
-                 [bk/ring-gzip "0.3.0"]
+                 [bk/ring-gzip "0.3.0"] ;Not actually used yet?
+
+                 [com.cognitect.aws/api "LATEST" :exclusions [org.eclipse.jetty/jetty-http
+                                                               org.eclipse.jetty/jetty-io
+                                                               org.eclipse.jetty/jetty-util]]
+
+                 [com.cognitect.aws/endpoints  "LATEST"]
+                 [com.cognitect.aws/dynamodb "LATEST"]
 
                  ;; Other
 
