@@ -29,5 +29,7 @@
    db))
 
 (defn save-item
-  [item]
-  (ajax-post "/api/save" {:body item}))
+  [item handler]
+  (ajax-post "/api/library/save"
+             {:params {:item item}
+              :handler handler}))

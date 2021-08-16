@@ -1,5 +1,6 @@
 (ns vaguely.server
   (:require [vaguely.data :as data]
+            [vaguely.library.api :as library]
             [ring.adapter.jetty :as jetty]
             [compojure.core :refer [context routes GET POST]]
             [compojure.route :as route]
@@ -31,11 +32,13 @@
   (routes
    (GET "/" [] (response/redirect "index.html"))
    (GET "/health" [] (response/response "ok"))
-   #_ ;; Someday
-   (GET "/library" [] (library-view/view))
    (context "/api" []
-     (GET "/data" [url]
-          (response/response (handle-data url))))
+            (GET "/data" [url]
+                 (response/response (handle-data url)))
+            (context "/library" []
+                     (GET "/list" [] (library/list))
+                     (GET "/get" [id] (library/read-item id))
+                     (POST "/save" [item] (library/write-item item))))
    (route/not-found "Not Found")))
 
 (def site-defaults

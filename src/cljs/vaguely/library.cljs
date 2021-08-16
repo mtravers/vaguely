@@ -920,8 +920,7 @@
           :image (workspace-image)
           }]
      (prn :item item)
-     (api/save-item item)
-     (js/alert "Saved")                   ;TODO
+     (api/save-item item #(rf/dispatch [:saved %]))
      db)))
 
  
