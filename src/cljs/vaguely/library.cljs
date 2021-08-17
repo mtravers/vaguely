@@ -1,5 +1,6 @@
 (ns vaguely.library
   (:require [vaguely.api :as api]
+            [vaguely.blockly :as blockly]
             [org.parkerici.blockoid.core :as bo]
             [clojure.string :as str]
             [re-frame.core :as rf]))
@@ -936,6 +937,11 @@
    (assoc db :view :library)))
 
 (rf/reg-event-db
+ :unbrowse
+ (fn [db _]
+   (assoc db :view :vega)))
+
+(rf/reg-event-db
  :library-data
  (fn [db [_ data]]
    (assoc db :library data)))
@@ -945,15 +951,29 @@
  (fn [db _]
    (get db :library)))
 
+(rf/reg-event-db                        ;reg-event-fx
+ :retrieve
+ (fn [db [_ item]]
+   (blockly/restore-from-saved (:blockdef item))
+   (rf/dispatch [:unbrowse])
+   db
+   ))
+
 (defn render-item
   [item]
-  [:div
-   [:span (:uuid item)]])               ;TODO temp obv
+  [:div {:on-click #(rf/dispatch [:retrieve item])}
+   [:span (:uuid item)]               ;TODO temp obv
+   [:div {:dangerouslySetInnerHTML {:__html (:image item)}
+          
+          }]])
 
 (defn browse
   []
   [:div
-   ;; TODO close box
-   "Hello sailor 2"
+   "Library"
+   [:button {:type "button" :title "Cancel"
+             :class "close"
+             :on-click #(rf/dispatch [:unbrowse])}
+    [:i {:class "material-icons"} "close"]]
    `[:ul
     ~@(map render-item @(rf/subscribe [:library]))]])

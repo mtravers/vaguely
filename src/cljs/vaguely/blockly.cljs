@@ -1,9 +1,11 @@
 (ns vaguely.blockly
   (:require [org.parkerici.blockoid.core :as bo]
+            [org.parkerici.multitool.core :as u]
             cljsjs.blockly.msg.en
             [vaguely.defblocks :as defblocks]
             [vaguely.vega :as vega]
             [re-frame.core :as rf]
+            [clojure.data.xml :as xml]
             )
   )
 
@@ -48,3 +50,20 @@
             :compact-all compact-all
             :vega-spec (vega/generate-vega-spec)
             ))))
+
+;;; Need to rethink this 
+#_
+(defn save-fake-fields!
+  [xml-string]
+  (->> xml-string
+       xml/parse-str
+       (u/walk-collect #(when (= "field" (get-in % [:attrs :name]))
+                          (keyword (first (get % :content)))))
+       (reset! graph/fake-fields)))
+
+(defn restore-from-saved
+  [xml-string]
+  #_ (save-fake-fields! xml-string)
+  (let [dom (.textToDom js/Blockly.Xml xml-string)]
+    (bo/clear-workspace)
+    (.domToWorkspace js/Blockly.Xml dom @bo/workspace)))
