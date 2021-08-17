@@ -920,7 +920,40 @@
           :image (workspace-image)
           }]
      (prn :item item)
-     (api/save-item item #(rf/dispatch [:saved %]))
+     (api/ajax-post "/api/library/save"
+                    {:params {:item item}
+                     :handler #(rf/dispatch [:saved %])})
+
      db)))
 
- 
+(rf/reg-event-db
+ :browse
+ (fn [db _]
+   (api/ajax-get "/api/library/list"
+                 {:handler (fn [data]
+                              (rf/dispatch [:library-data data]))}
+                 )
+   (assoc db :view :library)))
+
+(rf/reg-event-db
+ :library-data
+ (fn [db [_ data]]
+   (assoc db :library data)))
+
+(rf/reg-sub
+ :library
+ (fn [db _]
+   (get db :library)))
+
+(defn render-item
+  [item]
+  [:div
+   [:span (:uuid item)]])               ;TODO temp obv
+
+(defn browse
+  []
+  [:div
+   ;; TODO close box
+   "Hello sailor 2"
+   `[:ul
+    ~@(map render-item @(rf/subscribe [:library]))]])

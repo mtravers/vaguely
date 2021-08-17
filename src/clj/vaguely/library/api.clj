@@ -15,7 +15,11 @@
               :dynamodb
               {:op :Scan
                :request {:TableName table-name}})]
-    (map dynamo/untag-attributes (:Items resp))))
+    (->> resp
+         :Items
+         (map dynamo/untag-attributes)
+         (sort-by :date-created)
+         reverse)))
 
 (defn assign-uuid
   [map]
@@ -35,8 +39,6 @@
                         add-version
                         assign-uuid
                         dynamo/tag-attributes)}}))
-
-
 
 (defn read-item
   [uuid]

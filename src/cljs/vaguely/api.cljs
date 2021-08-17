@@ -28,8 +28,5 @@
    (rf/dispatch [:error error])         ;TODO needs a handler
    db))
 
-(defn save-item
-  [item handler]
-  (ajax-post "/api/library/save"
-             {:params {:item item}
-              :handler handler}))
+
+
