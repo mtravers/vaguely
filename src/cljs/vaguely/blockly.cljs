@@ -48,8 +48,11 @@
             :struct struct
             :compact compact
             :compact-all compact-all
-            :vega-spec (vega/generate-vega-spec)
-            ))))
+            :vega-spec (try
+                         (vega/generate-vega-spec)
+                         (catch :default e
+                           (rf/dispatch [:error (str e)])
+                           nil))))))
 
 ;;; Need to rethink this 
 #_

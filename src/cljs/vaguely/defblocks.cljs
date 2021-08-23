@@ -27,7 +27,9 @@
   [:point :bar :line :tick :arc :area :boxplot :text])
 
 (def attributes                         ;aka channels. There are more; these seemed like the most useful
-  [:x :y :size :shape :color :opacity :column :theta :radius :strokeWidth :facet :text :tooltip])
+  [:x :y :size :shape :color :opacity :column :theta :radius :strokeWidth :facet :text :tooltip
+   :x2 :y2                              ;would be good to turn these off when they don't apply (same goes for others)
+   ])
 
 ;;; Count is special (no underlying field) so has its own block. See https://vega.github.io/vega-lite/docs/aggregate.html#ops
 ;;; for complete set, these are the ones that seemed most useful.
@@ -74,6 +76,56 @@
              :options (options [:nominal :ordinal :quantitative :temporal]) ;TODO derive dynamically from data
              }
             ]}
+
+   ;; V2
+
+   {:type "encoding2"
+    :colour encoding-color
+    :previousStatement "encoding"
+    :nextStatement "encoding"
+    :message0 "attribute %1"
+    :args0 [{:type "field_dropdown"
+             :name "attribute"
+             :options (options attributes)
+             }]
+    :message1 "properties %1"
+    :args1 [{:type "input_statement"
+             :name "encoding_attribute"
+             #_ :check #_ (str (name kind) "_constraint")}]
+    }
+   {:type "encoding_field"
+    :colour encoding-color
+    :message0 "field %1"
+    :previousStatement "encoding_att"
+    :nextStatement "encoding_att"
+    :args0 [{:type "field_dropdown" 
+             :name "field"
+             :options field-options
+             }]
+    }
+   {:type "encoding_type"
+    :colour encoding-color
+    :message0 "type %1"
+    :previousStatement "encoding_att"
+    :nextStatement "encoding_att"
+    :args0 [{:type "field_dropdown"
+             :name "type"
+             :options (options [:nominal :ordinal :quantitative :temporal]) ;TODO derive dynamically from data
+             }]
+    }
+   {:type "encoding_scale"
+    :colour encoding-color
+    :message0 "scale %1"
+    :previousStatement "encoding_att"
+    :nextStatement "encoding_att"
+    :args0 [{:type "field_dropdown"
+             :name "scale"
+             :options (options [:linear :log :symlog :pow :sqrt             ;for continuous vars (TODO adjust options). Also :pow requires argument?
+                                :time :utc
+                                
+                                ])
+             }]
+    }
    {:type "count_encoding"
     :colour encoding-color
     :previousStatement "encoding"
@@ -184,6 +236,11 @@
      [:block "encoding"]
      [:block "count_encoding" {} [:field "attribute" "size"]]
      [:block "aggregate_encoding"]
+
+     [:block "encoding2"]
+     [:block "encoding_field"]
+     [:block "encoding_type"]
+     [:block "encoding_scale"]
      ]
     [:category "Library" {}
      [:button "Browse" [:browse]]

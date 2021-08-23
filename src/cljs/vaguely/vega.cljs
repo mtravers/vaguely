@@ -51,6 +51,34 @@
          {:field (get-in block [:children "field"])
           :aggregate (get-in block [:children "aggregate"])}))
 
+(defmethod vega-spec :default [block]
+  (throw (ex-info (str "Don't know how to generate Vega for " (:type block))
+                  {:block block})))
+
+
+;;; V2 blocks
+
+(defmethod vega-spec "encoding2" [block]
+  (assoc (vega-spec (get-in block [:children :next]))
+         (get-in block [:children "attribute"])
+         (vega-spec (get-in block [:children "encoding_attribute"]))))
+
+(defmethod vega-spec "encoding_field" [block]
+  (merge
+   {:field (get-in block [:children "field"])    }
+   (vega-spec (get-in block [:children :next]))))
+
+(defmethod vega-spec "encoding_scale" [block]
+  (merge
+   {:scale {:type (get-in block [:children "scale"]) }}
+   (vega-spec (get-in block [:children :next]))))
+
+(defmethod vega-spec "encoding_type" [block]
+  (merge
+   {:type (get-in block [:children "type"]) }
+   (vega-spec (get-in block [:children :next]))))
+
+
 ;;; Terminates recursion down :next chain
 (defmethod vega-spec nil [_block]
   {})
