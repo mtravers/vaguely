@@ -18,12 +18,33 @@
             (fn [db _]
               (:view db)))
 
+(rf/reg-sub :error
+            (fn [db _]
+              (:error db)))
+
+(rf/reg-event-db
+ :error
+ (fn [db [_ error]]
+   (assoc db :error error)))
+
+(defn error
+  []
+  [:div.alert-danger
+   [:button {:type "button" :title "Close"
+             :class "close"
+             :on-click #(rf/dispatch [:error nil])}
+    [:i {:class "material-icons"} "close"]]
+   [:pre
+    (str @(rf/subscribe [:error]))]])
+
 (defn rh-pane
   []
   [:div
-  (case @(rf/subscribe [:view])
-    :vega [vega/render]
-    :library [library/browse])])
+   (when @(rf/subscribe [:error])
+     [error])
+   (case @(rf/subscribe [:view])
+     :vega [vega/render]
+     :library [library/browse])])
 
 
 (defn ^:dev/after-load mount-root []
