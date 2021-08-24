@@ -126,6 +126,20 @@
                                 ])
              }]
     }
+
+   {:type "encoding_value"
+    :colour encoding-color
+    :message0 "value %1"
+    :previousStatement "encoding_att"
+    :nextStatement "encoding_att"
+    :args0 [{:type "field_input"
+             :name "value"
+             }]
+    }
+
+
+   ;; V1 Aggregates
+
    {:type "count_encoding"
     :colour encoding-color
     :previousStatement "encoding"
@@ -241,6 +255,7 @@
      [:block "encoding_field"]
      [:block "encoding_type"]
      [:block "encoding_scale"]
+     [:block "encoding_value"]
      ]
     [:category "Library" {}
      [:button "Browse" [:browse]]
