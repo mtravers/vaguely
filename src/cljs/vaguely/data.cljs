@@ -9,7 +9,6 @@
 (def covid "https://covidtracking.com/data/download/all-states-history.csv") ;20K records, a bit much
 (def counties "https://www.worlddata.info/downloads/countries.csv")
 
-
 (def data-color "#e09f3e")            ;TODO elsewhere
 
 (defn blockdefs
@@ -57,16 +56,24 @@
 
 
 (rf/reg-event-db
+ :set-fields
+ (fn [db [_ fields]]
+   (assoc db :data-fields fields)))
+
+;;; Extremely kludgey trick to allow field settings to be restored even when the query results aren't present
+(defonce fake-fields (atom [:?]))
+
+(rf/reg-event-db
  :set-data
  (fn [db [_  data]]
+   (reset! fake-fields [])
    (assoc db
           :data data
-          :display-columns (keys (first data))))) ;TODO improve
+          :data-fields (keys (first data))))) ;TODO improve
 
-
-(rf/reg-sub :display-columns
+(rf/reg-sub :data-fields
             (fn [db _]
-              (:display-columns db)))
+              (:data-fields db)))
 
 (rf/reg-sub :data
             (fn [db _]

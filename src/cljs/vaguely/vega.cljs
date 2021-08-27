@@ -27,6 +27,7 @@
       {:mark {:type (get-in block [:children "mark"])
               :tooltip {:content "data"}}
        :encoding (vega-spec (get-in block [:children "encoding"]))
+       ;; The default default is too small...this is not always right but better than nothing
        :height default-height
        :width default-width
        :data {:values data}
@@ -99,7 +100,8 @@
 (defn render
   "React component showing the graph"
   []
-  (if-let [spec (generate-vega-spec)]
-    [:div#graph
-     (oz/view-spec [:vega-lite spec])]
-    [:span "wait for it"]))
+  (let [spec (generate-vega-spec)]
+    (if (empty? spec)
+      [:span "wait for it"]
+      [:div#graph
+       (oz/view-spec [:vega-lite spec])])))

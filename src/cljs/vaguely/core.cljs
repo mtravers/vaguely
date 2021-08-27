@@ -49,12 +49,6 @@
 
 (defn ^:dev/after-load mount-root []
   (rf/clear-subscription-cache!)
-  #_
-  (reagent/render [views/svg-pane]
-    (.getElementById js/document "drawing"))
-  ;; turned off for now
-  ;; TODO put under an expander or something
-
   (reagent/render [rh-pane]
     (.getElementById js/document "vega")))
 

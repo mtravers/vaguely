@@ -11,16 +11,13 @@
   [key-list]
   (mapv (juxt name name) key-list))
 
-;;; Extremely kludgey trick to allow field settings to be restored even when the query results aren't present
-(defonce fake-fields (atom [:?]))
-
 (defn field-options
   "Compute the options for field dropdown at runtime. Value is js array of arrayus"
   []
-  (let [cols @(rf/subscribe [:display-columns])
-        cols (if (empty? cols)
-               @fake-fields
-               cols)] 
+  (let [cols (or @data/fake-fields
+                 @(rf/subscribe [:data-fields]))
+        cols (if (empty? cols) [:?] cols)
+        ]
     (to-array (map #(to-array [(name %) (name %)]) cols))))
 
 (def marks

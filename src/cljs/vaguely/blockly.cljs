@@ -4,6 +4,7 @@
             cljsjs.blockly.msg.en
             [vaguely.defblocks :as defblocks]
             [vaguely.vega :as vega]
+            [vaguely.data :as data]
             [re-frame.core :as rf]
             [clojure.data.xml :as xml]
             )
@@ -54,19 +55,20 @@
                            (rf/dispatch [:error (str e)])
                            nil))))))
 
-;;; Need to rethink this 
-#_
 (defn save-fake-fields!
   [xml-string]
-  (->> xml-string
-       xml/parse-str
-       (u/walk-collect #(when (= "field" (get-in % [:attrs :name]))
-                          (keyword (first (get % :content)))))
-       (reset! graph/fake-fields)))
+  (let [fake-fields (->> xml-string
+                         xml/parse-str
+                         (u/walk-collect #(when (= "field" (get-in % [:attrs :name]))
+                                            (keyword (first (get % :content))))))]
+    ;; This has to go through a special mechanism so the fields are there before blocks get built
+    ;; This is undone when actual data is available
+    (reset! data/fake-fields fake-fields)
+    ))
 
 (defn restore-from-saved
   [xml-string]
-  #_ (save-fake-fields! xml-string)
+  (save-fake-fields! xml-string)
   (let [dom (.textToDom js/Blockly.Xml xml-string)]
     (bo/clear-workspace)
     (.domToWorkspace js/Blockly.Xml dom @bo/workspace)))
