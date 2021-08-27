@@ -880,7 +880,8 @@
      :height (* height scale)}
     ))
 
-(defn workspace-image []
+(defn workspace-image
+  []
   (let [canvas (.-svgBlockCanvas_ (.-mainWorkspace js/Blockly))
         cp (.cloneNode canvas true)
         style-elt (.createElementNS js/document "http://www.w3.org/2000/svg" "style")]
@@ -909,7 +910,18 @@
           ]
       xml)))
 
-(defn now []
+;;; https://meshworld.in/convert-canvas-to-an-image-using-javascript/
+;;; Would have been nicer maybe to use vega API but oz kind of hides that
+(defn vega-image
+  []
+  (let [canvas (aget (.-children (.getElementById js/document "vis")) 0)]
+    (.toDataURL canvas)))
+
+(defn ask-user [prompt]
+  (.prompt js/window prompt))
+
+(defn now
+  []
   (.now js/Date))
 
 (rf/reg-event-db
@@ -917,8 +929,10 @@
  (fn [db _]
    (let [item
          {:blockdef (bo/workspace-xml-string) 
+          :name (ask-user "Name/description")
           :date-created (now)
           :image (workspace-image)
+          :vega-image (vega-image)
           }]
      (prn :item item)
      (api/ajax-post "/api/library/save"
@@ -962,10 +976,11 @@
 (defn render-item
   [item]
   [:div {:on-click #(rf/dispatch [:retrieve item])}
-   [:span (:uuid item)]               ;TODO temp obv
+   [:span (:name item)]
    [:div {:dangerouslySetInnerHTML {:__html (:image item)}
-          
-          }]])
+          }]
+   (when (:vega-image item)
+     [:img {:src (:vega-image item)}])])
 
 (defn browse
   []

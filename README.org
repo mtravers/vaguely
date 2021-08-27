@@ -28,3 +28,7 @@ Library is checked into mvn for deploy.
 
 lein localrepo install -r mvn ~/.m2/repository/org/parkerici/multitool/0.0.3/multitool-0.0.3.jar org.parkerici/multitool 0.0.3
 
+* Library
+
+Stored on AWS DynamoDB https://us-west-2.console.aws.amazon.com/dynamodbv2/home?region=us-west-2#item-explorer?table=vaguely_library
+

@@ -29,7 +29,7 @@
 
 (defn error
   []
-  [:div.alert-danger
+  [:div.alert-danger {:style {:white-space "normal"}} ;yes this is how you get wrapping
    [:button {:type "button" :title "Close"
              :class "close"
              :on-click #(rf/dispatch [:error nil])}
