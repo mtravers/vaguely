@@ -975,12 +975,24 @@
 
 (defn render-item
   [item]
-  [:div {:on-click #(rf/dispatch [:retrieve item])}
-   [:span (:name item)]
-   [:div {:dangerouslySetInnerHTML {:__html (:image item)}
-          }]
-   (when (:vega-image item)
-     [:img {:src (:vega-image item)}])])
+  [:div.row  {:on-click #(rf/dispatch [:retrieve item])}
+   [:div.col
+    [:div (:name item)]
+    [:div {:dangerouslySetInnerHTML {:__html (:image item)}
+           :style {:transform "scale(0.7)"
+                   :transform-origin "0 0"
+                   :width 300
+                   }
+           }]]
+   [:div.col
+    (when (:vega-image item)
+      [:img {:src (:vega-image item)
+             :style {; :transform "scale(0.5)"
+                     ; :transform-origin "0 0"
+                     :width 300
+                     }}
+       ])]
+   ])
 
 (defn browse
   []
@@ -990,5 +1002,5 @@
              :class "close"
              :on-click #(rf/dispatch [:unbrowse])}
     [:i {:class "material-icons"} "close"]]
-   `[:ul
+   `[:div.container
     ~@(map render-item @(rf/subscribe [:library]))]])

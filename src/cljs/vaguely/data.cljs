@@ -66,10 +66,10 @@
 (rf/reg-event-db
  :set-data
  (fn [db [_  data]]
-   (reset! fake-fields [])
+   (reset! fake-fields nil)
    (assoc db
           :data data
-          :data-fields (keys (first data))))) ;TODO improve
+          :data-fields (sort (keys (first data))))))
 
 (rf/reg-sub :data-fields
             (fn [db _]
