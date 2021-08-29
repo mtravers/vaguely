@@ -8,7 +8,16 @@
                  [reagent "0.8.1"]
                  [re-frame "0.10.9"]
                  [org.parkerici/blockoid "0.3.6"]
-                 [metasoarous/oz "1.6.0-alpha6"] ;warning: later versions seem to have broken dependencies
+                 [metasoarous/oz "1.6.0-alpha6" :exclusions [vega vega-lite vega-t
+ooltip vega-embed] ] ;warning: later versions seem to have broken dependencies
+
+                 ;; More uptodate than Oz provides, but still not most recent, need to build the cljsjs projects if I want those
+                 [cljsjs/vega-embed "6.14.2-0"]
+                 [cljsjs/vega-lite "4.17.0-0"]
+                 [cljsjs/vega-tooltip "0.24.2-0"]
+                 [cljsjs/vega "5.20.2-0"]
+
+
                  [cljs-ajax "0.8.0"]
 
                  ;; Back end
