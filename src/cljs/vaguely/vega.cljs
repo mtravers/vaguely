@@ -129,6 +129,10 @@
    {:value (u/coerce-numeric (get-in block [:children "value"])) }
    (vega-spec (get-in block [:children :next]))))
 
+(defmethod vega-spec "encoding_aggregate" [block]
+  (merge
+   {:aggregate (get-in block [:children "aggregate"])}
+   (vega-spec (get-in block [:children :next]))))
 
 ;;; Terminates recursion down :next chain
 (defmethod vega-spec nil [_block]

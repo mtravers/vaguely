@@ -28,10 +28,9 @@
    :x2 :y2                              ;would be good to turn these off when they don't apply (same goes for others)
    ])
 
-;;; Count is special (no underlying field) so has its own block. See https://vega.github.io/vega-lite/docs/aggregate.html#ops
 ;;; for complete set, these are the ones that seemed most useful.
 (def aggregates
-  [:valid :missing :distinct :median :mean :variance :stdev :sum :product :min :max])
+  [:count :valid :missing :distinct :median :mean :variance :stdev :sum :product :min :max])
 
 (def layer-color "#9e2a2b")
 (def encoding-color "#407492")
@@ -134,6 +133,19 @@
              }]
     }
 
+   {:type "encoding_aggregate"
+    :colour encoding-color
+    :message0 "aggregated by %1"
+    :previousStatement "encoding_att"
+    :nextStatement "encoding_att"
+    :args0 [{:type "field_dropdown" 
+             :name "aggregate"
+             :options (options aggregates)}
+            ]
+    }
+
+
+
 
    ;; V1 Aggregates
 
@@ -229,10 +241,11 @@
 (defn cat-blocks [cat]
   (mapv toolbox-item (filter #(= cat (:category %)) blocks)))
 
+
+
 (defn toolbox-def
   []
   `[:toolbox
-    ~(data/toolbox)
     [:category "Visualization" {}
      [:block "layer" {}
       ;; For some reason displayed order is inverse
@@ -244,16 +257,41 @@
                           [:field "attribute" "x"]]]
 
       ]
-     [:block "encoding"]
-     [:block "count_encoding" {} [:field "attribute" "size"]]
-     [:block "aggregate_encoding"]
+     [:block "layer" {}
+      ;; For some reason displayed order is inverse
+      [:value "encoding" [:block "encoding2" {}
+                          [:field "attribute" "size"]
+                          [:value "encoding_attribute" [:block "encoding_aggregate" {} ]]
+                          ]]
+      [:value "encoding" [:block "encoding2" {}
+                          [:field "attribute" "y"]
+                          [:value "encoding_attribute" [:block "encoding_type" {} [:field "type" "quantitative"]]]
+                          [:value "encoding_attribute" [:block "encoding_field"]]
+                          ]]
+      [:value "encoding" [:block "encoding2" {}
+                          [:field "attribute" "x"]
+                          [:value "encoding_attribute" [:block "encoding_type" {} [:field "type" "quantitative"]]]
+                          [:value "encoding_attribute" [:block "encoding_field"]]]]
+
+      ]
+
+     #_ [:block "encoding"]
+     #_ [:block "count_encoding" {} [:field "attribute" "size"]]
+     #_ [:block "aggregate_encoding"]
 
      [:block "encoding2"]
+     [:block "encoding2" {}
+      [:value "encoding_attribute" [:block "encoding_type" {} [:field "type" "quantitative"]]]
+      [:value "encoding_attribute" [:block "encoding_field"]]
+      ]
      [:block "encoding_field"]
-     [:block "encoding_type"]
+     [:block "encoding_aggregate"]
+     [:block "encoding_type"]           ;maybe flush, this has to be on all attributes
      [:block "encoding_scale"]
      [:block "encoding_value"]
+
      ]
+    ~(data/toolbox)
     [:category "Library" {}
      [:button "Browse" [:browse]]
      [:button "Save" [:save]]]
