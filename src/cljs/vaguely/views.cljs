@@ -4,12 +4,7 @@
    [re-frame.core :as rf]
    ))
 
-;;; TODO having a global subscribe probably is inefficient. Experiment with per-grapheme subscribe
-
-;;; TODO this might be needed elsewhere, like in groups
-(defn keyize [seq]
-  (map (fn [g i] (assoc g :key i))
-       seq (range)))
+;;; TODO a lot of this is unused stuff from mr frieze, delete it or hook it up
 
 (defn compact-pane []
   [:pre

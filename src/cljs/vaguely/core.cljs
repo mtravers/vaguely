@@ -27,14 +27,20 @@
  (fn [db [_ error]]
    (assoc db :error error)))
 
+(rf/reg-event-db
+ :open-url
+ (fn [db [_ url]]
+   (.open js/window url "_blank")
+   db))
+
 (defn error
   []
-  [:div.alert-danger {:style {:white-space "normal"}} ;yes this is how you get wrapping
+  [:div.alert-danger 
    [:button {:type "button" :title "Close"
              :class "close"
              :on-click #(rf/dispatch [:error nil])}
     [:i {:class "material-icons"} "close"]]
-   [:pre
+   [:pre {:style {:white-space "normal"}} ;yes this is how you get wrapping
     (str @(rf/subscribe [:error]))]])
 
 (defn rh-pane

@@ -218,6 +218,7 @@
    [:field "NUM" default]]
   )
 
+;;; TODO currently unused, would be cool to be able to use this for color constants (maybe domain and range!)
 (defmethod default-block :colour [type default]
   [:block "colour_picker" {}
    [:field "COLOUR" default]])
@@ -240,8 +241,6 @@
 
 (defn cat-blocks [cat]
   (mapv toolbox-item (filter #(= cat (:category %)) blocks)))
-
-
 
 (defn toolbox-def
   []
@@ -295,4 +294,8 @@
     [:category "Library" {}
      [:button "Browse" [:browse]]
      [:button "Save" [:save]]]
+    [:category "About" {}
+     [:button "About" [:open-url "http://www.hyperphor.com/ammdi/pages/Vaguely.html"]] ;TODO About page
+     [:button "Source" [:open-url "https://github.com/mtravers/vaguely"]]
+     ]
     ])

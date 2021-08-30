@@ -97,7 +97,6 @@
            (if-let [r (and (map? x) (:repeat x))]
              (do
                (when @repeat
-                 ;; TODO make this user-visible, this is something a user could easily build and need to tell them why...
                  (throw (ex-info "Multiple repeats detected" {:fields [@repeat r]})))
                (reset! repeat r)
                (assoc x :repeat "layer"))
@@ -140,8 +139,7 @@
 
 (defn generate-vega-spec
   []
-  (let [; data @(rf/subscribe [:data])    ;TOOD get data from block
-        blocks @(rf/subscribe [:compact-all])
+  (let [blocks @(rf/subscribe [:compact-all])
         vega-block (u/something #(= "layer" (:type %)) blocks)]
     (-> vega-block
         vega-spec
@@ -151,8 +149,11 @@
 (defn render
   "React component showing the graph"
   []
-  (let [spec (generate-vega-spec)]
-    (if (empty? spec)
-      [:span "wait for it"]
-      [:div#graph
-       (oz/view-spec [:vega-lite spec])])))
+  (try                                  ;this fails to get Vega errorss which happen frokm a render loop
+    (let [spec (generate-vega-spec)]
+      (if (empty? spec)
+        [:span "wait for it"]
+        [:div#graph
+         (oz/view-spec [:vega-lite spec])]))
+    (catch :default e
+      (rf/dispatch [:error e]))))
