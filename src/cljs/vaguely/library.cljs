@@ -911,10 +911,13 @@
       xml)))
 
 ;;; https://meshworld.in/convert-canvas-to-an-image-using-javascript/
-;;; Would have been nicer maybe to use vega API but oz kind of hides that
+;;; Would have been maybe nicer to use vega API but oz hides that
 (defn vega-image
   []
-  (let [canvas (aget (.-children (.getElementById js/document "vis")) 0)]
+  (let [child0 (fn [elt]
+                 (aget (.-children elt) 0))
+        ;; Warning: this has been known to change between Vega versions
+        canvas (child0 (child0 (.getElementById js/document "vis")))]
     (.toDataURL canvas)))
 
 (defn ask-user [prompt]
