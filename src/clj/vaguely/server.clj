@@ -4,6 +4,7 @@
             [ring.adapter.jetty :as jetty]
             [compojure.core :refer [context routes GET POST]]
             [compojure.route :as route]
+            [taoensso.timbre :as log]
             [ring.util.response :as response]
             [ring.middleware.defaults :as middleware]
             [ring.middleware.gzip :refer [wrap-gzip]]
@@ -21,6 +22,7 @@
 
 (defn handle-data
   [url]
+  (log/infof "Data request %s" url)
   (let [data (data/read-file-maps url)]
     {:status 200
      :headers {}
