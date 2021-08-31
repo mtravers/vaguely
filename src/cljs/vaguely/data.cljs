@@ -7,7 +7,13 @@
 
 (def source "https://forge.scilab.org/index.php/p/rdataset/source/file/master/csv/datasets/trees.csv")
 (def covid "https://covidtracking.com/data/download/all-states-history.csv") ;20K records, a bit much
-(def counties "https://www.worlddata.info/downloads/countries.csv")
+
+(def poverty "https://raw.githubusercontent.com/owid/owid-datasets/master/datasets/Absolute%20number%20of%20people%20in%20poverty%20-%20OWID%20based%20on%20World%20Bank%20(Povcal)%20(2015)/Absolute%20number%20of%20people%20in%20poverty%20-%20OWID%20based%20on%20World%20Bank%20(Povcal)%20(2015).csv") ;good lord
+
+(def movies "https://vega.github.io/editor/data/movies.json")
+
+
+
 
 (def data-color "#e09f3e")            ;TODO elsewhere
 
@@ -83,5 +89,5 @@
   []
   `[:category "Data" {}
     [:block "data-url" {}
-     [:field "url" ~covid]]
+     [:field "url" ~movies]]
     ~@(canned/toolbox)])

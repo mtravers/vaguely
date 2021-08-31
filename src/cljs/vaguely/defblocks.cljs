@@ -246,6 +246,7 @@
   []
   `[:toolbox
     [:category "Visualization" {}
+     #_
      [:block "layer" {}
       ;; For some reason displayed order is inverse
       [:value "encoding" [:block "count_encoding" {}
@@ -295,7 +296,7 @@
      [:button "Browse" [:browse]]
      [:button "Save" [:save]]]
     [:category "About" {}
-     [:button "About" [:open-url "http://www.hyperphor.com/ammdi/pages/Vaguely.html"]] ;TODO About page
+     [:button "About" [:open-url "http://www.hyperphor.com/ammdi/pages/About-Vaguely.html"]]
      [:button "Source" [:open-url "https://github.com/mtravers/vaguely"]]
      ]
     ])
