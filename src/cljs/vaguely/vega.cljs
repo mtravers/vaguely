@@ -114,7 +114,7 @@
       vspec)))
 
 (defmethod vega-spec "encoding_scale" [block]
-  (merge
+  (u/merge-recursive
    {:scale {:type (get-in block [:children "scale"]) }}
    (vega-spec (get-in block [:children :next]))))
 
@@ -127,6 +127,30 @@
   (merge
    {:value (u/coerce-numeric (get-in block [:children "value"])) }
    (vega-spec (get-in block [:children :next]))))
+
+;;; Want to DRY this but hard because macros are hard in cljs
+
+(defmethod vega-spec "encoding_domain_min" [block]
+  (u/merge-recursive
+   {:scale {:domainMin (u/coerce-numeric (get-in block [:children "value"])) }}
+   (vega-spec (get-in block [:children :next]))))
+
+(defmethod vega-spec "encoding_domain_max" [block]
+  (u/merge-recursive
+   {:scale {:domainMax (u/coerce-numeric (get-in block [:children "value"])) }}
+   (vega-spec (get-in block [:children :next]))))
+
+(defmethod vega-spec "encoding_range_min" [block]
+  (u/merge-recursive
+   {:scale {:rangeMin (u/coerce-numeric (get-in block [:children "value"])) }}
+   (vega-spec (get-in block [:children :next]))))
+
+(defmethod vega-spec "encoding_range_max" [block]
+  (u/merge-recursive 
+   {:scale {:rangeMax (u/coerce-numeric (get-in block [:children "value"])) }}
+   (vega-spec (get-in block [:children :next]))))
+
+
 
 (defmethod vega-spec "encoding_aggregate" [block]
   (merge
@@ -146,13 +170,15 @@
         ;; Maybe other post vega-spec transforms
         repeat-transform)))
 
+
+
 (defn render
   "React component showing the graph"
   []
   (try                                  ;this fails to get Vega errorss which happen frokm a render loop
     (let [spec (generate-vega-spec)]
       (if (empty? spec)
-        [:span "wait for it"]
+        [:span "⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—"] ; not sure what to show here; could be a sort of about / welcomne
         [:div#graph
          (oz/view-spec [:vega-lite spec])]))
     (catch :default e

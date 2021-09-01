@@ -1,6 +1,7 @@
 (ns vaguely.defblocks
   (:require [vaguely.data :as data]
             [org.parkerici.multitool.core :as u]
+            [clojure.string :as str]
             [re-frame.core :as rf]
             ))
 
@@ -35,6 +36,32 @@
 (def layer-color "#9e2a2b")
 (def encoding-color "#407492")
 
+;;; Abstractions for creating encoding attributes
+
+(defn encoding-attribute
+  [name]
+  {:type (str "encoding_" name)
+   :colour encoding-color
+   :message0 (str (str/replace name #"_" " ") " %1")
+   :previousStatement "encoding_att"
+   :nextStatement "encoding_att"
+   })
+
+(defn encoding-dropdown-attribute
+  [name attribute-options]
+  (-> (encoding-attribute name)
+      (assoc :args0 [{:type "field_dropdown" 
+                      :name name        ;should probably be a constant name, but this is working now
+                      :options attribute-options
+                      }])))
+
+(defn encoding-string-attribute
+  [name]
+  (-> (encoding-attribute name)
+      (assoc :args0 [{:type "field_input" 
+                      :name "value"
+                      }])))
+
 (defn graph-blockdefs
   "Visualization blocks"
   []
@@ -58,7 +85,7 @@
     :colour encoding-color
     :previousStatement "encoding"
     :nextStatement "encoding"
-    :message0 "attribute %1 field %2 type %3" ;TODO axis, scale...
+    :message0 "attribute %1 field %2 type %3" 
     :args0 [{:type "field_dropdown"
              :name "attribute"
              :options (options attributes)
@@ -89,63 +116,26 @@
              :name "encoding_attribute"
              #_ :check #_ (str (name kind) "_constraint")}]
     }
-   {:type "encoding_field"
-    :colour encoding-color
-    :message0 "field %1"
-    :previousStatement "encoding_att"
-    :nextStatement "encoding_att"
-    :args0 [{:type "field_dropdown" 
-             :name "field"
-             :options field-options
-             }]
-    }
-   {:type "encoding_type"
-    :colour encoding-color
-    :message0 "type %1"
-    :previousStatement "encoding_att"
-    :nextStatement "encoding_att"
-    :args0 [{:type "field_dropdown"
-             :name "type"
-             :options (options [:nominal :ordinal :quantitative :temporal]) ;TODO derive dynamically from data
-             }]
-    }
-   {:type "encoding_scale"
-    :colour encoding-color
-    :message0 "scale %1"
-    :previousStatement "encoding_att"
-    :nextStatement "encoding_att"
-    :args0 [{:type "field_dropdown"
-             :name "scale"
-             :options (options [:linear :log :symlog :pow :sqrt             ;for continuous vars (TODO adjust options). Also :pow requires argument?
-                                :time :utc
+
+
+   (encoding-dropdown-attribute "field" field-options)
+
+   ;; TODO derive dynamically from data
+   (encoding-dropdown-attribute "type" (options [:nominal :ordinal :quantitative :temporal]))
+   (encoding-dropdown-attribute "scale"  (options [:linear :log :symlog :pow :sqrt             ;for continuous vars (TODO adjust options). Also :pow requires argument?
+                                                   :time :utc
                                 
-                                ])
-             }]
-    }
+                                                   ]))
 
-   {:type "encoding_value"
-    :colour encoding-color
-    :message0 "value %1"
-    :previousStatement "encoding_att"
-    :nextStatement "encoding_att"
-    :args0 [{:type "field_input"
-             :name "value"
-             }]
-    }
+   (encoding-string-attribute "value")
 
-   {:type "encoding_aggregate"
-    :colour encoding-color
-    :message0 "aggregated by %1"
-    :previousStatement "encoding_att"
-    :nextStatement "encoding_att"
-    :args0 [{:type "field_dropdown" 
-             :name "aggregate"
-             :options (options aggregates)}
-            ]
-    }
+   (encoding-string-attribute "domain_min")
+   (encoding-string-attribute "domain_max")
+   (encoding-string-attribute "range_min")
+   (encoding-string-attribute "range_max")
 
-
-
+   (-> (encoding-dropdown-attribute "aggregate" (options aggregates))
+       (assoc :message0 "aggregated by %1"))
 
    ;; V1 Aggregates
 
@@ -289,6 +279,11 @@
      [:block "encoding_type"]           ;maybe flush, this has to be on all attributes
      [:block "encoding_scale"]
      [:block "encoding_value"]
+
+     [:block "encoding_domain_min"]
+     [:block "encoding_domain_max"]
+     [:block "encoding_range_min"]
+     [:block "encoding_range_max"]
 
      ]
     ~(data/toolbox)
