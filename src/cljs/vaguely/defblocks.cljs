@@ -66,8 +66,11 @@
   "Visualization blocks"
   []
   (list 
+
    {:type "layer"
     :colour layer-color
+    :previousStatement "layer"
+    :nextStatement "layer"
     :message0 "mark %1"
     :args0 [{:type "field_dropdown"
              :name "mark"
@@ -81,6 +84,25 @@
              :name "encoding"
              #_ :check #_ (str (name kind) "_constraint")}]
     }
+
+   {:type "layers"
+    :colour layer-color
+    :message0 "layers %1"
+    :args0 [{:type "input_statement"
+             :name "layers"
+             }]
+    :message1 "data %1"
+    :args1 [{:type "input_value"
+             :name "data"
+             }]
+    :message2 "encodings %1"
+    :args2 [{:type "input_statement"
+             :name "encoding"
+             #_ :check #_ (str (name kind) "_constraint")}]
+    }
+
+   ;; V1
+
    {:type "encoding"
     :colour encoding-color
     :previousStatement "encoding"
@@ -99,43 +121,6 @@
              :options (options [:nominal :ordinal :quantitative :temporal]) ;TODO derive dynamically from data
              }
             ]}
-
-   ;; V2
-
-   {:type "encoding2"
-    :colour encoding-color
-    :previousStatement "encoding"
-    :nextStatement "encoding"
-    :message0 "attribute %1"
-    :args0 [{:type "field_dropdown"
-             :name "attribute"
-             :options (options attributes)
-             }]
-    :message1 "properties %1"
-    :args1 [{:type "input_statement"
-             :name "encoding_attribute"
-             #_ :check #_ (str (name kind) "_constraint")}]
-    }
-
-
-   (encoding-dropdown-attribute "field" field-options)
-
-   ;; TODO derive dynamically from data
-   (encoding-dropdown-attribute "type" (options [:nominal :ordinal :quantitative :temporal]))
-   (encoding-dropdown-attribute "scale"  (options [:linear :log :symlog :pow :sqrt             ;for continuous vars (TODO adjust options). Also :pow requires argument?
-                                                   :time :utc
-                                
-                                                   ]))
-
-   (encoding-string-attribute "value")
-
-   (encoding-string-attribute "domain_min")
-   (encoding-string-attribute "domain_max")
-   (encoding-string-attribute "range_min")
-   (encoding-string-attribute "range_max")
-
-   (-> (encoding-dropdown-attribute "aggregate" (options aggregates))
-       (assoc :message0 "aggregated by %1"))
 
    ;; V1 Aggregates
 
@@ -166,6 +151,42 @@
              :name "aggregate"
              :options (options aggregates)}]}
 
+   ;; V2
+
+   {:type "encoding2"
+    :colour encoding-color
+    :previousStatement "encoding"
+    :nextStatement "encoding"
+    :message0 "attribute %1"
+    :args0 [{:type "field_dropdown"
+             :name "attribute"
+             :options (options attributes)
+             }]
+    :message1 "properties %1"
+    :args1 [{:type "input_statement"
+             :name "encoding_attribute"
+             #_ :check #_ (str (name kind) "_constraint")}]
+    }
+
+
+   (encoding-dropdown-attribute "field" field-options)
+
+   ;; TODO derive dynamically from data
+   (encoding-dropdown-attribute "type" (options [:nominal :ordinal :quantitative :temporal]))
+   (encoding-dropdown-attribute "scale"  (options [:linear :log :symlog :pow :sqrt             ;for continuous vars (TODO adjust options). Also :pow requires argument?
+                                                   :time :utc]))
+
+   (encoding-string-attribute "value")
+   (encoding-string-attribute "title")
+
+   (encoding-string-attribute "domain_min")
+   (encoding-string-attribute "domain_max")
+   (encoding-string-attribute "range_min")
+   (encoding-string-attribute "range_max")
+
+   (-> (encoding-dropdown-attribute "aggregate" (options aggregates))
+       (assoc :message0 "aggregated by %1"))
+
    ))
 
 
@@ -178,12 +199,6 @@
                          (.write (.-document new-window) content))}
    "open"])
 
-#_
-(defn number-block [name]
-  {:type name
-   :message0 name
-   :output :number
-   :colour "%{BKY_MATH_HUE}"})
 
 (def blocks
   (concat (graph-blockdefs)
@@ -194,6 +209,7 @@
 
 ;;; ⩓⩔⩓ toolbox ⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔⩓⩔
 
+;;; TODO this probably wants to move to Blockoid.
 ;;; TODO a lot of this is unused
 
 (defmulti default-block (fn [type default] type))
@@ -265,6 +281,8 @@
 
       ]
 
+     [:block "layers"]
+
      #_ [:block "encoding"]
      #_ [:block "count_encoding" {} [:field "attribute" "size"]]
      #_ [:block "aggregate_encoding"]
@@ -278,6 +296,7 @@
      [:block "encoding_aggregate"]
      [:block "encoding_type"]           ;maybe flush, this has to be on all attributes
      [:block "encoding_scale"]
+     [:block "encoding_title"]
      [:block "encoding_value"]
 
      [:block "encoding_domain_min"]

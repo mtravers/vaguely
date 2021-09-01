@@ -23,16 +23,31 @@
 (def default-width 500)
 
 (defmethod vega-spec "layer" [block]
-  (when-let [data-block (get-in block [:children "data"])]
-    (let [data (data/block-data data-block)]
-      {:mark {:type (get-in block [:children "mark"])
-              :tooltip {:content "data"}}
-       :encoding (vega-spec (get-in block [:children "encoding"]))
-       ;; The default default is too small...this is not always right but better than nothing
-       :height default-height
-       :width default-width
-       :data {:values data}
-       })))
+  (let [data-block (get-in block [:children "data"])]
+    {:mark {:type (get-in block [:children "mark"])
+            :tooltip {:content "data"}}
+     :encoding (vega-spec (get-in block [:children "encoding"]))
+     ;; The default default is too small...this is not always right but better than nothing
+     :height default-height
+     :width default-width
+     :data (when data-block {:values (data/block-data data-block)})
+     }))
+
+(defn block-seq
+  "Turns blocks linked by :next into a list" 
+  [block]
+  (when block
+    (cons block (block-seq (get-in block [:children :next])))))
+
+(defmethod vega-spec "layers" [block]
+  (let [data-block (get-in block [:children "data"])
+        layers-blocks (block-seq (get-in block [:children "layers"]))
+        encoding-blocks (get-in block [:children "encoding"])
+        ]
+    {:layer (map vega-spec layers-blocks)
+     :data (when data-block {:values (data/block-data data-block)})
+     :encoding (when encoding-blocks (vega-spec encoding-blocks))
+     }))
 
 (defmethod vega-spec "encoding" [block]
   (assoc (vega-spec (get-in block [:children :next]))
@@ -128,6 +143,11 @@
    {:value (u/coerce-numeric (get-in block [:children "value"])) }
    (vega-spec (get-in block [:children :next]))))
 
+(defmethod vega-spec "encoding_title" [block]
+  (merge
+   {:title (get-in block [:children "value"]) }
+   (vega-spec (get-in block [:children :next]))))
+
 ;;; Want to DRY this but hard because macros are hard in cljs
 
 (defmethod vega-spec "encoding_domain_min" [block]
@@ -164,12 +184,11 @@
 (defn generate-vega-spec
   []
   (let [blocks @(rf/subscribe [:compact-all])
-        vega-block (u/something #(= "layer" (:type %)) blocks)]
+        vega-block (u/something #(contains? #{"layer" "layers"} (:type %)) blocks)]
     (-> vega-block
         vega-spec
         ;; Maybe other post vega-spec transforms
         repeat-transform)))
-
 
 
 (defn render
@@ -178,7 +197,7 @@
   (try                                  ;this fails to get Vega errorss which happen frokm a render loop
     (let [spec (generate-vega-spec)]
       (if (empty? spec)
-        [:span "⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—⇄—⇆—"] ; not sure what to show here; could be a sort of about / welcomne
+        [:span "⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆"] 
         [:div#graph
          (oz/view-spec [:vega-lite spec])]))
     (catch :default e
