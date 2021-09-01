@@ -3,6 +3,7 @@
             [org.parkerici.multitool.core :as u]
             [re-frame.core :as rf]
             [clojure.walk :as walk]
+            [clojure.pprint :as pprint]
             [oz.core :as oz]
             ))
 
@@ -202,3 +203,12 @@
          (oz/view-spec [:vega-lite spec])]))
     (catch :default e
       (rf/dispatch [:error e]))))
+
+(defn spec-pane
+  []
+  (let [spec (dissoc (generate-vega-spec) :data)] ;TODO can have data sources in inside elements
+    [:pre {:style {:text-size "small"}}
+     (with-out-str (pprint/pprint spec))
+     ;; TODO Json version
+
+     ]))

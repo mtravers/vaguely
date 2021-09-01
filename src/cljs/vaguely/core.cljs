@@ -50,7 +50,9 @@
      [error])
    (case @(rf/subscribe [:view])
      :vega [vega/render]
-     :library [library/browse])])
+     :library [library/browse])
+   [vega/spec-pane]
+   ])
 
 
 (defn ^:dev/after-load mount-root []
