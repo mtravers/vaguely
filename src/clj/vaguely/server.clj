@@ -21,9 +21,9 @@
         {:status 500 :headers {} :body {:error (print-str e)}}))))
 
 (defn handle-data
-  [url]
+  [url format]
   (log/infof "Data request %s" url)
-  (let [data (data/read-file-maps url)]
+  (let [data (data/read-file-maps url (keyword format))]
     {:status 200
      :headers {}
      :body data}  
@@ -35,8 +35,8 @@
    (GET "/" [] (response/redirect "index.html"))
    (GET "/health" [] (response/response "ok"))
    (context "/api" []
-            (GET "/data" [url]
-                 (response/response (handle-data url)))
+            (GET "/data" [url format]
+                 (response/response (handle-data url format)))
             (context "/library" []
                      (GET "/list" [] (library/list))
                      (GET "/get" [id] (library/read-item id))

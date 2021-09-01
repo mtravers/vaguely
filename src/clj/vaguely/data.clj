@@ -53,13 +53,22 @@
     (json/read s :key-fn csv-coerce-head)))
 
 ;;; Fname is really a URL and maybe should be parsed with a proper URL library
-(defn read-file-maps
+(defn infer-format
   [fname]
   (let [filetype (fs/extension fname)]
-    (case filetype
-      ".csv" (read-csv-file-maps fname \,)
-      ".tsv" (read-csv-file-maps fname \tab,)
-      ".json" (read-json-file fname)
-      ;; For now, default json, but should be smart
-      (read-json-file fname))))
+    (and filetype
+         (keyword (subs filetype 1)))))
+
+(defn read-file-maps
+  [fname format]
+  (let [format (if (or (nil? format)
+                       (= format :inferred))
+                 (infer-format fname)
+                 format)]
+    (case format
+      :csv (read-csv-file-maps fname \,)
+      :tsv (read-csv-file-maps fname \tab,)
+      :json (read-json-file fname)
+      (infer-format fname))))              ;or could error
+
         

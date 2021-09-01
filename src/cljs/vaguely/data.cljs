@@ -17,6 +17,10 @@
 
 (def data-color "#e09f3e")            ;TODO elsewhere
 
+(defn options
+  [key-list]
+  (mapv (juxt name name) key-list))
+
 (defn blockdefs
   []
   (cons
@@ -27,14 +31,19 @@
     :args0 [{:name "url"
              :type "field_input"
              :spellcheck false}]
+    :message1 "format %1"
+    :args1 [{:name "format"
+             :type "field_dropdown"
+             :options (options [:inferred :csv :tsv :json :excel])}]
     }
    (canned/blockdefs)))
 
 (defmulti block-data (fn [block] (:type block)))
 
 (defmethod block-data "data-url" [block]
-  (let [url (get-in block [:children "url"])]
-    (rf/dispatch [:get-data-url url])
+  (let [url (get-in block [:children "url"])
+        format (get-in block [:children "format"])]
+    (rf/dispatch [:get-data-url url format])
     @(rf/subscribe [:data])             ;not sure this will work
     ))
   
@@ -52,14 +61,14 @@
 
 (rf/reg-event-db
  :get-data-url
- (fn [db [_ url]]
+ (fn [db [_ url format]]
+   ;; TODO Possible Screw case where we change format, need to do update maybe
    (when-not (= (:data-url db) url)
      (api/ajax-get "/api/data"
-                   {:url-params {:url url}
+                   {:url-params {:url url :format format}
                     :handler (fn [resp]
                                (rf/dispatch [:set-data (:body resp)]))}))
    (assoc db :data-url url)))
-
 
 (rf/reg-event-db
  :set-fields
