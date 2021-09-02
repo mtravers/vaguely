@@ -9,7 +9,7 @@
 (def table-name "vaguely_library")
 (def version 1)                         
 
-(defn list
+(defn list-items
   []
   (let [resp (dynamo/invoke-with-error
               :dynamodb

@@ -38,7 +38,7 @@
             (GET "/data" [url format]
                  (response/response (handle-data url format)))
             (context "/library" []
-                     (GET "/list" [] (library/list))
+                     (GET "/list" [] (library/list-items))
                      (GET "/get" [id] (library/read-item id))
                      (POST "/save" [item] (library/write-item item))))
    (route/not-found "Not Found")))
