@@ -44,7 +44,7 @@
    (route/not-found "Not Found")))
 
 (def site-defaults
-  (-> middleware/site-defaults
+  (-> middleware/site-defaults                   ;Note: should separate out site and API
       (assoc-in [:security :anti-forgery] false)          ;interfering with save?
       )) 
 

@@ -61,9 +61,9 @@
         independent (vega-spec (get-in block [:children "independent"]))]
     {:mark {:type :line
             :color "red"},
-     :transform [{(if (= method :loess) :loess :regression) (:field (first (vals dependent)))
+     :transform [{(if (= method "loess") :loess :regression) (:field (first (vals dependent)))
                   :on (:field (first (vals independent)))
-                  :method (if (= method :loess) nil method)}]
+                  :method (if (= method "loess") nil method)}]
      :encoding
      (merge dependent independent)}
     ))

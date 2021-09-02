@@ -946,6 +946,12 @@
      db)))
 
 (rf/reg-event-db
+ :saved
+ (fn [db [_ response]]                  ;TODO response is not in right format
+   (js/alert "Saved.")                  ;TODO use nicer flash
+   db))
+
+(rf/reg-event-db
  :browse
  (fn [db _]
    (api/ajax-get "/api/library/list"
