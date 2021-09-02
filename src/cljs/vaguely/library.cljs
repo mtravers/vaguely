@@ -918,7 +918,8 @@
                  (aget (.-children elt) 0))
         ;; Warning: this has been known to change between Vega versions
         canvas (child0 (child0 (.getElementById js/document "vis")))]
-    (.toDataURL canvas)))
+    ;; Unfortunately these are huge and often over Dynamo's 400K limit...argh
+    (.toDataURL canvas "image/jpeg" 0.8)))
 
 (defn ask-user [prompt]
   (.prompt js/window prompt))
@@ -937,7 +938,7 @@
           :image (workspace-image)
           :vega-image (vega-image)
           }]
-     (prn :item item)
+     #_ (prn :item item)
      (api/ajax-post "/api/library/save"
                     {:params {:item item}
                      :handler #(rf/dispatch [:saved %])})

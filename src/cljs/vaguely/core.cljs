@@ -4,7 +4,7 @@
    [re-frame.core :as rf]
    [vaguely.blockly :as blockly]
    [vaguely.config :as config]
-   vaguely.views
+   [vaguely.views :as views]
    vaguely.data
    [vaguely.library :as library]
    [vaguely.vega :as vega]
@@ -48,6 +48,7 @@
   [:div
    (when @(rf/subscribe [:error])
      [error])
+   #_(views/about-pane)
    (case @(rf/subscribe [:view])
      :vega [vega/render]
      :library [library/browse])

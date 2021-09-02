@@ -108,7 +108,7 @@
     :message0 "%1 regression"
     :args0 [{:type "field_dropdown" 
             :name "method"
-            :options (options [:linear :log :exp :pow :quad :poly])
+            :options (options [:linear :log :exp :pow :quad :poly :loess])
              }]
 
 

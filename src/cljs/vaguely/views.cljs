@@ -48,3 +48,20 @@
  (fn [_ _]
    (full-screen "drawing")
    {}))
+
+(defn about-pane
+  []
+  [:div
+   [:h3 "About Vaguely"]
+   [:p
+    "Vaguely is a tool for exploratory data visualization, based on "
+    [:a {:href "https://vega.github.io/vega-lite/"} "Vega-Lite"]
+    ", a high-level grammar of interactive graphics. Vaguely is a partial translation of that grammar into a Scratch-like blocks interface, making it easier to experiment with different visualizations."]
+   [:h4 "Credits"]
+   [:ul
+    [:li "Author: " [:a {:href "http://hyperphor.com"} "Mike Travers"]]
+    [:li "Support: " [:a {:href "http://parkerici.org"} "Parker Institute for Cancer Immunotherapy"]]
+    [:li "Components: Vega-Lite, Blockly, Clojure"]]
+   [:p "Copyright © Hyperphor 2021"]])
+
+

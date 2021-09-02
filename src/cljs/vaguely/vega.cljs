@@ -1,5 +1,6 @@
 (ns vaguely.vega
   (:require [vaguely.data :as data] 
+            [vaguely.views :as views]
             [org.parkerici.multitool.core :as u]
             [re-frame.core :as rf]
             [clojure.walk :as walk]
@@ -52,15 +53,17 @@
      :encoding (when encoding-blocks (vega-spec encoding-blocks))
      }))
 
+;;; TODO add the regression info labels (see https://vega.github.io/vega-lite/docs/regression.html)
+;;; Loess is different that the rest 
 (defmethod vega-spec "regression_layer" [block]
-  (let [type (get-in block [:children "method"])
+  (let [method (get-in block [:children "method"])
         dependent (vega-spec (get-in block [:children "dependent"]))
         independent (vega-spec (get-in block [:children "independent"]))]
     {:mark {:type :line
             :color "red"},
-     :transform [{:regression (:field (first (vals dependent)))
+     :transform [{(if (= method :loess) :loess :regression) (:field (first (vals dependent)))
                   :on (:field (first (vals independent)))
-                  :method type}]
+                  :method (if (= method :loess) nil method)}]
      :encoding
      (merge dependent independent)}
     ))
@@ -213,7 +216,7 @@
   (try                                  ;this fails to get Vega errorss which happen frokm a render loop
     (let [spec (generate-vega-spec)]
       (if (empty? spec)
-        [:span "⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆⇄⇆"] 
+        (views/about-pane)
         [:div#graph
          (oz/view-spec [:vega-lite spec])]))
     (catch :default e
@@ -223,7 +226,8 @@
   []
   (let [spec (dissoc (generate-vega-spec) :data)] ;TODO can have data sources in inside elements
     [:pre {:style {:text-size "small"}}
-     (with-out-str (pprint/pprint spec))
+     (when-not (empty? spec)
+       (with-out-str (pprint/pprint spec)))
      ;; TODO Json version
 
      ]))
