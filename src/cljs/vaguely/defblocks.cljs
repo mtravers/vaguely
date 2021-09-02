@@ -101,6 +101,27 @@
              #_ :check #_ (str (name kind) "_constraint")}]
     }
 
+   {:type "regression_layer"
+    :colour layer-color
+    :previousStatement "layer"
+    :nextStatement "layer"
+    :message0 "%1 regression"
+    :args0 [{:type "field_dropdown" 
+            :name "method"
+            :options (options [:linear :log :exp :pow :quad :poly])
+             }]
+
+
+    :message1 "independent %1"
+    :args1 [{:type "input_statement"
+             :name "independent"
+             }]
+    :message2 "dependent %1"
+    :args2 [{:type "input_statement"
+             :name "dependent"
+             }]
+    }
+
    ;; V1
 
    {:type "encoding"
@@ -303,6 +324,8 @@
      [:block "encoding_domain_max"]
      [:block "encoding_range_min"]
      [:block "encoding_range_max"]
+
+     [:block "regression_layer"]
 
      ]
     ~(data/toolbox)

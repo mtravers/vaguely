@@ -26,7 +26,9 @@
 (defmethod vega-spec "layer" [block]
   (let [data-block (get-in block [:children "data"])]
     {:mark {:type (get-in block [:children "mark"])
-            :tooltip {:content "data"}}
+            :tooltip {:content "data"}
+            :clip true                  ;Necessary for domain_min/max to work as expected.
+            }
      :encoding (vega-spec (get-in block [:children "encoding"]))
      ;; The default default is too small...this is not always right but better than nothing
      :height default-height
@@ -49,6 +51,19 @@
      :data (when data-block {:values (data/block-data data-block)})
      :encoding (when encoding-blocks (vega-spec encoding-blocks))
      }))
+
+(defmethod vega-spec "regression_layer" [block]
+  (let [type (get-in block [:children "method"])
+        dependent (vega-spec (get-in block [:children "dependent"]))
+        independent (vega-spec (get-in block [:children "independent"]))]
+    {:mark {:type :line
+            :color "red"},
+     :transform [{:regression (:field (first (vals dependent)))
+                  :on (:field (first (vals independent)))
+                  :method type}]
+     :encoding
+     (merge dependent independent)}
+    ))
 
 (defmethod vega-spec "encoding" [block]
   (assoc (vega-spec (get-in block [:children :next]))
