@@ -178,12 +178,16 @@
     :colour encoding-color
     :previousStatement "encoding"
     :nextStatement "encoding"
-    :message0 "attribute %1"
+    :message0 "attribute %1 type %2"
     :args0 [{:type "field_dropdown"
              :name "attribute"
              :options (options attributes)
+             }
+            {:type "field_dropdown"
+             :name "type"
+             :options (options [:nominal :ordinal :quantitative :temporal])
              }]
-    :message1 "properties %1"
+    :message1 "%1"
     :args1 [{:type "input_statement"
              :name "encoding_attribute"
              #_ :check #_ (str (name kind) "_constraint")}]
@@ -192,8 +196,10 @@
 
    (encoding-dropdown-attribute "field" field-options)
 
-   ;; TODO derive dynamically from data
+
+   ;; TODO temp here for old library compat
    (encoding-dropdown-attribute "type" (options [:nominal :ordinal :quantitative :temporal]))
+
    (encoding-dropdown-attribute "scale"  (options [:linear :log :symlog :pow :sqrt             ;for continuous vars (TODO adjust options). Also :pow requires argument?
                                                    :time :utc]))
 
@@ -272,52 +278,41 @@
 (defn toolbox-def
   []
   `[:toolbox
-    [:category "Visualization" {}
-     #_
-     [:block "layer" {}
-      ;; For some reason displayed order is inverse
-      [:value "encoding" [:block "count_encoding" {}
-                          [:field "attribute" "size"]]]
-      [:value "encoding" [:block "encoding" {}
-                          [:field "attribute" "y"]]]
-      [:value "encoding" [:block "encoding" {}
-                          [:field "attribute" "x"]]]
+    [:category "Marks / Layers" {}
 
-      ]
+     [:block "layer"]
      [:block "layer" {}
       ;; For some reason displayed order is inverse
       [:value "encoding" [:block "encoding2" {}
                           [:field "attribute" "size"]
+                          [:field "type" "quantitative"]
                           [:value "encoding_attribute" [:block "encoding_aggregate" {} ]]
                           ]]
       [:value "encoding" [:block "encoding2" {}
                           [:field "attribute" "y"]
-                          [:value "encoding_attribute" [:block "encoding_type" {} [:field "type" "quantitative"]]]
+                          [:field "type" "quantitative"]
                           [:value "encoding_attribute" [:block "encoding_field"]]
                           ]]
       [:value "encoding" [:block "encoding2" {}
                           [:field "attribute" "x"]
-                          [:value "encoding_attribute" [:block "encoding_type" {} [:field "type" "quantitative"]]]
+                          [:field "type" "quantitative"]
                           [:value "encoding_attribute" [:block "encoding_field"]]]]
 
       ]
 
      [:block "layers"]
-
-     #_ [:block "encoding"]
-     #_ [:block "count_encoding" {} [:field "attribute" "size"]]
-     #_ [:block "aggregate_encoding"]
+     [:block "regression_layer"]
+     ]
+    [:category "Encodings" {}
 
      [:block "encoding2"]
      [:block "encoding2" {}
-      [:value "encoding_attribute" [:block "encoding_type" {} [:field "type" "quantitative"]]]
+      [:field "type" "quantitative"]
       [:value "encoding_attribute" [:block "encoding_field"]]
       ]
      [:block "encoding_field"]
      [:block "encoding_aggregate"]
-     [:block "encoding_type"]           ;maybe flush, this has to be on all attributes
      [:block "encoding_scale"]
-     [:block "encoding_title"]
      [:block "encoding_value"]
 
      [:block "encoding_domain_min"]
@@ -325,15 +320,11 @@
      [:block "encoding_range_min"]
      [:block "encoding_range_max"]
 
-     [:block "regression_layer"]
+     [:block "encoding_title"]
 
      ]
     ~(data/toolbox)
     [:category "Library" {}
      [:button "Browse" [:browse]]
      [:button "Save" [:save]]]
-    [:category "About" {}
-     [:button "About" [:open-url "http://www.hyperphor.com/ammdi/pages/About-Vaguely.html"]]
-     [:button "Source" [:open-url "https://github.com/mtravers/vaguely"]]
-     ]
     ])

@@ -57,6 +57,9 @@
     "Vaguely is a tool for exploratory data visualization, based on "
     [:a {:href "https://vega.github.io/vega-lite/"} "Vega-Lite"]
     ", a high-level grammar of interactive graphics. Vaguely is a partial translation of that grammar into a Scratch-like blocks interface, making it easier to experiment with different visualizations."]
+   [:p "To get started, try selecting an example from the "
+    [:a {:href "#" :on-click #(rf/dispatch [:browse])} "library"] "."
+    ]
    [:h4 "Credits"]
    [:ul
     [:li "Author: " [:a {:href "http://hyperphor.com"} "Mike Travers"]]

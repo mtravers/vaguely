@@ -94,16 +94,15 @@
 
 ;;; V2 blocks
 
-
-
 (defmethod vega-spec "encoding2" [block]
   (assoc (vega-spec (get-in block [:children :next]))
          (get-in block [:children "attribute"])
-         (vega-spec (get-in block [:children "encoding_attribute"]))))
+         (assoc (vega-spec (get-in block [:children "encoding_attribute"]))
+                :type (get-in block [:children "type"]))))
 
 (defmethod vega-spec "encoding_field" [block]
   (merge
-   {:field (get-in block [:children "field"])    }
+   {:field (get-in block [:children "field"])}
    (vega-spec (get-in block [:children :next]))))
 
 ;;; Layers
@@ -229,5 +228,4 @@
      (when-not (empty? spec)
        (with-out-str (pprint/pprint spec)))
      ;; TODO Json version
-
      ]))
