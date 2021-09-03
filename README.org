@@ -1,32 +1,26 @@
 * Vaguely
 
-Status; copying over bits of Mr. Frieze and Enflame
+Vaguely is a tool for exploratory data visualization, based on Vega-Lite, a high-level grammar of interactive graphics. Vaguely is a partial translation of that grammar into a Scratch-like blocks interface, making it easier to experiment with different visualizations.
 
-* To run
+Credits
+Author: Mike Travers
+Support: Parker Institute for Cancer Immunotherapy
+Components: Vega-Lite, Blockly, Clojure
+Copyright © Hyperphor 2021
 
-lein figwheel
-open localhost:3456
+* To run locally
 
+This will compile the front end, launch the back end, and open a browser.
 
-* Deploy to Hyperphor
+#+BEGIN_CODE
+lein launch
+#+END_CODE
 
-[not yet]
+The library functions won't work unless you set up your own DynamoDB table and credentials.
 
+* Deployed version
 
-git push hyperphor master
-
-Will show at
-http://hyperphor.com/mrfrieze/resources/public/index.html
-
-Note: for now, you have to do 
-lein cljsbuild once
-on hyperphor....should automate that.
-
-
-* Multitool
-Library is checked into mvn for deploy.
-
-lein localrepo install -r mvn ~/.m2/repository/org/parkerici/multitool/0.0.3/multitool-0.0.3.jar org.parkerici/multitool 0.0.3
+https://vagueness.herokuapp.com/index.html
 
 * Library
 

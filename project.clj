@@ -8,8 +8,7 @@
                  [reagent "0.8.1"]
                  [re-frame "0.10.9"]
                  [org.parkerici/blockoid "0.3.6"]
-                 [metasoarous/oz "1.6.0-alpha6" :exclusions [vega vega-lite vega-t
-ooltip vega-embed] ] ;warning: later versions seem to have broken dependencies
+                 [metasoarous/oz "1.6.0-alpha6" :exclusions [vega vega-lite vega-tooltip vega-embed] ] ;warning: later versions seem to have broken dependencies
 
                  ;; More uptodate than Oz provides, but still not most recent, need to build the cljsjs projects if I want those
                  [cljsjs/vega-embed "6.14.2-0"]
@@ -35,8 +34,8 @@ ooltip vega-embed] ] ;warning: later versions seem to have broken dependencies
                  [bk/ring-gzip "0.3.0"] ;Not actually used yet?
 
                  [com.cognitect.aws/api "LATEST" :exclusions [org.eclipse.jetty/jetty-http
-                                                               org.eclipse.jetty/jetty-io
-                                                               org.eclipse.jetty/jetty-util]]
+                                                              org.eclipse.jetty/jetty-io
+                                                              org.eclipse.jetty/jetty-util]]
 
                  [com.cognitect.aws/endpoints  "LATEST"]
                  [com.cognitect.aws/dynamodb "LATEST"]
@@ -59,6 +58,9 @@ ooltip vega-embed] ] ;warning: later versions seem to have broken dependencies
             [lein-shell "0.5.0"]
             [lein-localrepo "0.5.4"]    ;for multitool, until its public
             ]
+
+;  :aliases {"launch" ["do" "clean" ["cljsbuild" "once"] ["run" "1919"]]}
+  :aliases {"launch" ["run" "1917"]}
 
   :main ^:skip-aot vaguely.core
 
@@ -83,9 +85,8 @@ ooltip vega-embed] ] ;warning: later versions seem to have broken dependencies
     :plugins      [[lein-figwheel "0.5.19"]]
                                         ;    :source-paths ["dev"]
     }
-
-   :prod { }}
-
+   }
+  
   :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]
 
   :cljsbuild

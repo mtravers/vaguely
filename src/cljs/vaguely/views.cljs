@@ -60,7 +60,8 @@
    [:h4 "Credits"]
    [:ul
     [:li "Author: " [:a {:href "http://hyperphor.com"} "Mike Travers"]]
-    [:li "Support: " [:a {:href "http://parkerici.org"} "Parker Institute for Cancer Immunotherapy"]]
+    [:li "Support: " [:a {:href "https://parkerici.org"} "Parker Institute for Cancer Immunotherapy"]]
+    [:li "Source: " [:a {:href "https://github.com/mtravers/vaguely"} "Github"]]
     [:li "Components: Vega-Lite, Blockly, Clojure"]]
    [:p "Copyright © Hyperphor 2021"]])
 
