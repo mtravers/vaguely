@@ -985,32 +985,28 @@
 
 (defn render-item
   [item]
-  [:div.row  {:on-click #(rf/dispatch [:retrieve item])}
+  [:div.row.litem  {:on-click #(rf/dispatch [:retrieve item])}
    [:div.col
-    [:div (:name item)]
-    [:div {:dangerouslySetInnerHTML {:__html (:image item)}
-           :style {:transform "scale(0.7)"
-                   :transform-origin "0 0"
-                   :width 300
-                   }
-           }]]
+    [:div.ltitle (:name item)]
+    [:div.litem-c {:dangerouslySetInnerHTML {:__html (:image item)}
+                   }]]
    [:div.col
     (when (:vega-image item)
-      [:img {:src (:vega-image item)
-             :style {; :transform "scale(0.5)"
-                     ; :transform-origin "0 0"
-                     :width 300
-                     }}
+      [:img.litem-c.litem-c2 {:src (:vega-image item)}
        ])]
    ])
 
 (defn browse
   []
   [:div
-   "Library"
+   [:h3
+    "Library"
    [:button {:type "button" :title "Cancel"
              :class "close"
              :on-click #(rf/dispatch [:unbrowse])}
-    [:i {:class "material-icons"} "close"]]
-   `[:div.container
-    ~@(map render-item @(rf/subscribe [:library]))]])
+    [:i {:class "material-icons"} "close"]]]
+   [:div.container.lcont
+     (let [items @(rf/subscribe [:library])]
+       (if (empty? items)
+         [:b "loading..."]
+         (map render-item items)))]])
