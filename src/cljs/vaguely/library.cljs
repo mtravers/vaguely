@@ -952,18 +952,13 @@
    db))
 
 (rf/reg-event-db
- :browse
+ :refresh
  (fn [db _]
    (api/ajax-get "/api/library/list"
                  {:handler (fn [data]
                               (rf/dispatch [:library-data data]))}
                  )
-   (assoc db :view :library)))
-
-(rf/reg-event-db
- :unbrowse
- (fn [db _]
-   (assoc db :view :vega)))
+   db))
 
 (rf/reg-event-db
  :library-data
@@ -979,7 +974,7 @@
  :retrieve
  (fn [db [_ item]]
    (blockly/restore-from-saved (:blockdef item))
-   (rf/dispatch [:unbrowse])
+   (rf/dispatch [:choose-tab "Graph"])
    db
    ))
 
@@ -1003,10 +998,17 @@
     "Library"
    [:button {:type "button" :title "Cancel"
              :class "close"
-             :on-click #(rf/dispatch [:unbrowse])}
-    [:i {:class "material-icons"} "close"]]]
+             :on-click #(rf/dispatch [:refresh])}
+    [:i {:class "material-icons"} "refresh"]]]
    [:div.container.lcont
      (let [items @(rf/subscribe [:library])]
        (if (empty? items)
-         [:b "loading..."]
+         (do (rf/dispatch [:refresh])
+             [:b "loading..."])
          (map render-item items)))]])
+
+(rf/reg-event-db
+ :browse
+ (fn [db _]
+   (rf/dispatch [:choose-tab :rh "Library"])
+   db))

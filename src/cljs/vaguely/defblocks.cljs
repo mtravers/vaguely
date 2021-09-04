@@ -22,7 +22,7 @@
     (to-array (map #(to-array [(name %) (name %)]) cols))))
 
 (def marks
-  [:point :bar :line :tick :arc :area :boxplot :text])
+  [:point :bar :line :tick :arc :rect :area :boxplot :text])
 
 (def attributes                         ;aka channels. There are more; these seemed like the most useful
   [:x :y :size :shape :color :opacity :column :theta :radius :strokeWidth :facet :text :tooltip

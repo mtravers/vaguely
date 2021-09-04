@@ -6,8 +6,6 @@
    [vaguely.config :as config]
    [vaguely.views :as views]
    vaguely.data
-   [vaguely.library :as library]
-   [vaguely.vega :as vega]
    ))
 
 (defn dev-setup []
@@ -43,22 +41,12 @@
    [:pre {:style {:white-space "normal"}} ;yes this is how you get wrapping
     (str @(rf/subscribe [:error]))]])
 
-(defn rh-pane
-  []
-  [:div
-   (when @(rf/subscribe [:error])
-     [error])
-   #_(views/about-pane)
-   (case @(rf/subscribe [:view])
-     :vega [vega/render]
-     :library [library/browse])
-   [vega/spec-pane]
-   ])
+
 
 
 (defn ^:dev/after-load mount-root []
   (rf/clear-subscription-cache!)
-  (reagent/render [rh-pane]
+  (reagent/render [views/rh-pane]
     (.getElementById js/document "vega")))
 
 (defn re-frame-init []

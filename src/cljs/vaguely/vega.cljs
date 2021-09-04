@@ -215,17 +215,25 @@
   (try                                  ;this fails to get Vega errorss which happen frokm a render loop
     (let [spec (generate-vega-spec)]
       (if (empty? spec)
-        (views/about-pane)
+        "No graph specified"
         [:div#graph
          (oz/view-spec [:vega-lite spec])]))
     (catch :default e
       (rf/dispatch [:error e]))))
 
+(defn remove-data
+  [spec]
+  (walk/prewalk #(if (and (map? %) (contains? % :data))
+                   (dissoc % :data)
+                   %)
+                spec))
+
 (defn spec-pane
   []
-  (let [spec (dissoc (generate-vega-spec) :data)] ;TODO can have data sources in inside elements
+  (let [spec (remove-data (generate-vega-spec))]
     [:pre {:style {:text-size "small"}}
-     (when-not (empty? spec)
+     (if (empty? spec)
+        "No graph specified"
        (with-out-str (pprint/pprint spec)))
      ;; TODO Json version
      ]))

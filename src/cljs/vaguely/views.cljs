@@ -1,5 +1,7 @@
 (ns vaguely.views
   (:require
+   [vaguely.library :as library]
+   [vaguely.vega :as vega]
    [clojure.pprint :as pprint]
    [re-frame.core :as rf]
    ))
@@ -69,3 +71,50 @@
    [:p "Copyright © Hyperphor 2021"]])
 
 
+;;; Should be in some kind of web utils package oh well
+
+(rf/reg-sub
+ :active-tab
+ (fn [db [_ id]]
+   (get-in db [:active-tab id])))
+
+(rf/reg-event-db
+ :choose-tab
+ (fn [db [_ id tab]]
+   (assoc-in db [:active-tab id] tab)))
+
+(defn tabs
+  [id tabs]
+  (let [active (or @(rf/subscribe [:active-tab id]) (first (first tabs)))]
+    [:div
+     [:ul.nav.nav-tabs
+      (for [[name view] tabs]
+        [:li.nav-item
+         [:a.nav-link {:class (when (= name active) "active")
+                       :on-click #(rf/dispatch [:choose-tab id name])}
+          name]])]
+     ((tabs active))]))
+
+(defn error
+  []
+  [:div.alert-danger 
+   [:button {:type "button" :title "Close"
+             :class "close"
+             :on-click #(rf/dispatch [:error nil])}
+    [:i {:class "material-icons"} "close"]]
+   [:pre {:style {:white-space "normal"}} ;yes this is how you get wrapping
+    (str @(rf/subscribe [:error]))]])
+
+(defn rh-pane
+  []
+  [:div
+   (when @(rf/subscribe [:error])
+     [error])
+   (tabs :rh
+         {"About" about-pane
+          "Graph" vega/render
+          "Spec" vega/spec-pane
+          "Library" library/browse})])
+
+
+  
