@@ -29,3 +29,9 @@
 .litem svg {
     max-height: 300px;
 }
+
+
+.vtitle {
+    font-weight: bold;
+    background: #eee;
+}

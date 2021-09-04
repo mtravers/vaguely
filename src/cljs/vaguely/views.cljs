@@ -85,14 +85,17 @@
 
 (defn tabs
   [id tabs]
-  (let [active (or @(rf/subscribe [:active-tab id]) (first (first tabs)))]
+  (let [active (or @(rf/subscribe [:active-tab id]) "About")]
     [:div
      [:ul.nav.nav-tabs
       (for [[name view] tabs]
-        [:li.nav-item
-         [:a.nav-link {:class (when (= name active) "active")
-                       :on-click #(rf/dispatch [:choose-tab id name])}
-          name]])]
+        (if name
+          [:li.nav-item
+           [:a.nav-link {:class (when (= name active) "active")
+                         :on-click #(rf/dispatch [:choose-tab id name])}
+            name]]
+          [:li.nav-item
+           [:a.nav-link.disabled.vtitle view]]))]
      ((tabs active))]))
 
 (defn error
@@ -111,7 +114,8 @@
    (when @(rf/subscribe [:error])
      [error])
    (tabs :rh
-         {"About" about-pane
+         {nil "Vaguely"
+          "About" about-pane
           "Graph" vega/render
           "Spec" vega/spec-pane
           "Library" library/browse})])

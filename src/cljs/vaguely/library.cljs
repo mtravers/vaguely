@@ -974,7 +974,7 @@
  :retrieve
  (fn [db [_ item]]
    (blockly/restore-from-saved (:blockdef item))
-   (rf/dispatch [:choose-tab "Graph"])
+   (rf/dispatch [:choose-tab :rh "Graph"])
    db
    ))
 
