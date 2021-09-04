@@ -1,6 +1,5 @@
 (ns vaguely.vega
   (:require [vaguely.data :as data] 
-            [vaguely.views :as views]
             [org.parkerici.multitool.core :as u]
             [re-frame.core :as rf]
             [clojure.walk :as walk]

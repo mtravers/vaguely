@@ -912,6 +912,7 @@
 
 ;;; https://meshworld.in/convert-canvas-to-an-image-using-javascript/
 ;;; Would have been maybe nicer to use vega API but oz hides that
+;;; TODO note, this will fail silently if Graph pane is not active. Hopefully a rare case
 (defn vega-image
   []
   (let [child0 (fn [elt]
@@ -978,6 +979,7 @@
    db
    ))
 
+;;; TODO a delete affordance, but only for admins. 
 (defn render-item
   [item]
   [:div.row.litem  {:on-click #(rf/dispatch [:retrieve item])}
@@ -996,9 +998,10 @@
   [:div
    [:h3
     "Library"
-   [:button {:type "button" :title "Cancel"
-             :class "close"
-             :on-click #(rf/dispatch [:refresh])}
+   [:button {:type "button" :title "Refresh"
+             :class "refresh"
+             :on-click #(rf/dispatch [:refresh])
+             :style {:float "right"}}
     [:i {:class "material-icons"} "refresh"]]]
    [:div.container.lcont
      (let [items @(rf/subscribe [:library])]
