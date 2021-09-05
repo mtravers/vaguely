@@ -62,6 +62,19 @@
                       :name "value"
                       }])))
 
+(defn encoding-filter-attribute
+  [name]
+  (-> (encoding-attribute name)
+      ;; TODO needs a nice abstraction
+      (assoc :message0 "filter to %1 %2"
+             :args0 [{:type "field_dropdown" 
+                      :name "operator"
+                      :options '[[< "lt"] [<= "lte"] [= "equals"] [=> "gte"] [> "gt"]]
+                      }
+                     {:type "field_input" 
+                      :name "value"
+                      }])))
+
 (defn graph-blockdefs
   "Visualization blocks"
   []
@@ -206,6 +219,8 @@
    (encoding-string-attribute "value")
    (encoding-string-attribute "title")
 
+   (encoding-filter-attribute "filter")
+
    (encoding-string-attribute "domain_min")
    (encoding-string-attribute "domain_max")
    (encoding-string-attribute "range_min")
@@ -321,6 +336,7 @@
      [:block "encoding_range_max"]
 
      [:block "encoding_title"]
+     [:block "encoding_filter"]
 
      ]
     ~(data/toolbox)

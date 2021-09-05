@@ -145,6 +145,19 @@
                                :type "nominal"})))}
       vspec)))
 
+(defn- filter-transform
+  [vspec]
+  (let [filters (atom [])
+        munged
+        (walk/prewalk
+         (fn [x]
+           (if-let [r (and (map? x) (:filter x))]
+             (do (swap! filters conj {:filter (merge {:field (:field x)} (:filter x))})
+                 (dissoc x :filter))
+             x))
+         vspec)]
+    (update-in munged [:transform] concat @filters)))
+
 (defmethod vega-spec "encoding_scale" [block]
   (u/merge-recursive
    {:scale {:type (get-in block [:children "scale"]) }}
@@ -187,7 +200,12 @@
    {:scale {:rangeMax (u/coerce-numeric (get-in block [:children "value"])) }}
    (vega-spec (get-in block [:children :next]))))
 
-
+;;; Filters are not really part of encodings, so gets handled in postprocessing
+(defmethod vega-spec "encoding_filter" [block]
+  (merge
+   {:filter {(get-in block [:children "operator"])
+             (u/coerce-numeric (get-in block [:children "value"]))}}
+   (vega-spec (get-in block [:children :next]))))
 
 (defmethod vega-spec "encoding_aggregate" [block]
   (merge
@@ -199,26 +217,27 @@
   {})
 
 (defn generate-vega-spec
-  []
-  (let [blocks @(rf/subscribe [:compact-all])
-        vega-block (u/something #(contains? #{"layer" "layers"} (:type %)) blocks)]
+  [blocks]
+  (when-not (empty? blocks)
+  (let [vega-block (u/something #(contains? #{"layer" "layers"} (:type %)) blocks)]
     (-> vega-block
         vega-spec
-        ;; Maybe other post vega-spec transforms
-        repeat-transform)))
+        ;; TODO these do a lot of useless walking over the data; would be better to not add that until the end.
+        ;; Or don't use walker; or  a smarter walker that can be guided
+        filter-transform 
+        repeat-transform
+        ))))
 
 
 (defn render
   "React component showing the graph"
   []
-  (try                                  ;this fails to get Vega errorss which happen frokm a render loop
-    (let [spec (generate-vega-spec)]
-      (if (empty? spec)
-        "No graph specified"
-        [:div#graph
-         (oz/view-spec [:vega-lite spec])]))
-    (catch :default e
-      (rf/dispatch [:error e]))))
+  (let [spec @(rf/subscribe [:vega-spec])]
+    (if (empty? spec)
+      "No graph specified"
+      [:div#graph
+       (oz/view-spec [:vega-lite spec])]))
+  )
 
 (defn remove-data
   [spec]
