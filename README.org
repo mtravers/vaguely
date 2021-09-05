@@ -4,11 +4,15 @@ Vaguely is a tool for exploratory data visualization, based on Vega-Lite, a high
 
 You can use it here: https://vagueness.herokuapp.com/ (warning: may take awhile to start up)
 
+
+file:Screen_Shot_2021-09-04_at_5.39.27_PM.png
+
+
 Credits:
 
-- Author: [Mike Travers](http://hyperphor.com)
-- Support: [Parker Institute for Cancer Immunotherapy](https://parkerici.org)
-- Components: [Vega-Lite](https://vega.github.io/vega-lite/), [Blockly]((https://developers.google.com/blockly/).), Clojure
+- Author: [[http://hyperphor.com][Mike Travers]]
+- Support: [[https://parkerici.org][Parker Institute for Cancer Immunotherapy]]
+- Components :[[https://vega.github.io/vega-lite/][Vega-Lite]], [[https://developers.google.com/blockly/][Blockly]], Clojure
 - Copyright © Hyperphor 2021
 
 * To run locally
