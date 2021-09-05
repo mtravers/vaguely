@@ -939,10 +939,10 @@
           :image (workspace-image)
           :vega-image (vega-image)
           }]
-     #_ (prn :item item)
-     (api/ajax-post "/api/library/save"
-                    {:params {:item item}
-                     :handler #(rf/dispatch [:saved %])})
+     (when (:name item)                 ;nil if user canceled
+       (api/ajax-post "/api/library/save"
+                      {:params {:item item}
+                       :handler #(rf/dispatch [:saved %])}))
 
      db)))
 

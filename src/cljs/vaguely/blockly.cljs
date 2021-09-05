@@ -30,7 +30,6 @@
                                         ;TODO thought I fixed this...
 
 (defn update-blockly []
-  (prn :update)
   (bo/define-blocks (defblocks/block-defs))
   (bo/update-toolbox (bo/toolbox (defblocks/toolbox-def))))
 
@@ -44,16 +43,19 @@
  (fn [db _]
    (let [struct (bo/workspace-selected-xml)
          compact (bo/compact struct)
-         compact-all (bo/compact (bo/workspace-xml))]
+         compact-all (bo/compact (bo/workspace-xml))
+         vega-spec (try
+                     (vega/generate-vega-spec)
+                     (catch :default e
+                       (rf/dispatch [:error (str e)])
+                       nil))]
+     (when-not (empty? vega-spec)
+       (rf/dispatch [:choose-tab :rh "Graph"]))
      (assoc db
             :struct struct
             :compact compact
             :compact-all compact-all
-            :vega-spec (try
-                         (vega/generate-vega-spec)
-                         (catch :default e
-                           (rf/dispatch [:error (str e)])
-                           nil))))))
+            :vega-spec vega-spec))))
 
 (defn save-fake-fields!
   [xml-string]
