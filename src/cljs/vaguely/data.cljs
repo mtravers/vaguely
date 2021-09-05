@@ -34,7 +34,7 @@
     :message1 "format %1"
     :args1 [{:name "format"
              :type "field_dropdown"
-             :options (options [:inferred :csv :tsv :json :excel])}]
+             :options (options [:inferred :csv :tsv :json])}] ;TODO  :excel
     }
    (canned/blockdefs)))
 

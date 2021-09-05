@@ -29,6 +29,7 @@
     [(+ (.-clientX e) xoff)
      (+ (.-clientY e) yoff)]))
 
+;;; Not really used...although could be useful for actual big data
 (defn full-screen [elem-name]
   (let [elem (.getElementById js/document elem-name)]
     ;; JFC. From https://www.w3schools.com/howto/howto_js_fullscreen.asp

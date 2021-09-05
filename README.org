@@ -2,25 +2,24 @@
 
 Vaguely is a tool for exploratory data visualization, based on Vega-Lite, a high-level grammar of interactive graphics. Vaguely is a partial translation of that grammar into a Scratch-like blocks interface, making it easier to experiment with different visualizations.
 
-Credits
-Author: Mike Travers
-Support: Parker Institute for Cancer Immunotherapy
-Components: Vega-Lite, Blockly, Clojure
-Copyright © Hyperphor 2021
+You can use it here: https://vagueness.herokuapp.com/ (warning: may take awhile to start up)
+
+Credits:
+
+- Author: [Mike Travers](http://hyperphor.com)
+- Support: [Parker Institute for Cancer Immunotherapy](https://parkerici.org)
+- Components: [Vega-Lite](https://vega.github.io/vega-lite/), [Blockly]((https://developers.google.com/blockly/).), Clojure
+- Copyright © Hyperphor 2021
 
 * To run locally
 
 This will compile the front end, launch the back end, and open a browser.
 
-#+BEGIN_CODE
+#+BEGIN_SRC
 lein launch
-#+END_CODE
+#+END_SRC
 
 The library functions won't work unless you set up your own DynamoDB table and credentials.
-
-* Deployed version
-
-https://vagueness.herokuapp.com/index.html
 
 * Library
 
