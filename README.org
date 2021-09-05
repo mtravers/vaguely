@@ -5,10 +5,10 @@ Vaguely is a tool for exploratory data visualization, based on Vega-Lite, a high
 You can use it here: https://vagueness.herokuapp.com/ (warning: may take awhile to start up)
 
 
-file:Screen_Shot_2021-09-04_at_5.39.27_PM.png
+[[file:Screen_Shot_2021-09-04_at_5.39.27_PM.png]]
 
 
-Credits:
+* Credits
 
 - Author: [[http://hyperphor.com][Mike Travers]]
 - Support: [[https://parkerici.org][Parker Institute for Cancer Immunotherapy]]
@@ -25,7 +25,14 @@ lein launch
 
 The library functions won't work unless you set up your own DynamoDB table and credentials.
 
-* Library
+* Devops
 
-Stored on AWS DynamoDB https://us-west-2.console.aws.amazon.com/dynamodbv2/home?region=us-west-2#item-explorer?table=vaguely_library
+Hosted for now on Heroku free tier.
+
+
+** Library
+
+Stored in [[https://us-west-2.console.aws.amazon.com/dynamodbv2/home?region=us-west-2#item-explorer?table=vaguely_library][AWS DynamoDB]].
+
+
 
