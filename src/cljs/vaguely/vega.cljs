@@ -248,7 +248,7 @@
 
 (defn spec-pane
   []
-  (let [spec (remove-data (generate-vega-spec))]
+  (let [spec (remove-data @(rf/subscribe [:vega-spec]))]
     [:pre {:style {:text-size "small"}}
      (if (empty? spec)
         "No graph specified"

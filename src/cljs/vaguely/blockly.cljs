@@ -38,6 +38,11 @@
  (fn [db _]
    (:compact-all db)))
 
+(rf/reg-sub
+ :vega-spec
+ (fn [db _]
+   (:vega-spec db)))
+
 (rf/reg-event-db
  :blockly-event
  (fn [db _]
@@ -45,9 +50,9 @@
          compact (bo/compact struct)
          compact-all (bo/compact (bo/workspace-xml))
          vega-spec (try
-                     (vega/generate-vega-spec)
+                     (vega/generate-vega-spec compact-all)
                      (catch :default e
-                       (rf/dispatch [:error (str e)])
+                       (rf/dispatch [:error [:spec e]])
                        nil))]
      (when-not (empty? vega-spec)
        (rf/dispatch [:choose-tab :rh "Graph"]))

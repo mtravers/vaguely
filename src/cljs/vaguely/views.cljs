@@ -90,13 +90,13 @@
     [:div
      [:ul.nav.nav-tabs
       (for [[name view] tabs]
-        (if name
-          [:li.nav-item
+        ^{:key name}
+        [:li.nav-item
+         (if name
            [:a.nav-link {:class (when (= name active) "active")
                          :on-click #(rf/dispatch [:choose-tab id name])}
-            name]]
-          [:li.nav-item
-           [:a.nav-link.disabled.vtitle view]]))]
+            name]
+           [:a.nav-link.disabled.vtitle view])])]
      ((tabs active))]))
 
 (defn error
