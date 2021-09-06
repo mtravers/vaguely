@@ -75,6 +75,20 @@
                       :name "value"
                       }])))
 
+;;; TODO This is not what you want. Sliders need to be able to slot into filters, eg. But proof the basics work nice.
+(defn encoding-slider
+  [name]
+  (-> (encoding-attribute name)
+      ;; TODO needs a nice abstraction
+      (assoc :message0 "slider %1 [%2, %3]"
+             :args0 [{:type "field_input" 
+                      :name "name"}
+                     {:type "field_input" 
+                      :name "min"}
+                     {:type "field_input" 
+                      :name "max"}
+                     ])))
+
 (defn graph-blockdefs
   "Visualization blocks"
   []
@@ -220,6 +234,7 @@
    (encoding-string-attribute "title")
 
    (encoding-filter-attribute "filter")
+   (encoding-slider "slider")
 
    (encoding-string-attribute "domain_min")
    (encoding-string-attribute "domain_max")
@@ -337,6 +352,7 @@
 
      [:block "encoding_title"]
      [:block "encoding_filter"]
+     [:block "encoding_slider"]
 
      ]
     ~(data/toolbox)

@@ -158,6 +158,28 @@
          vspec)]
     (update-in munged [:transform] concat @filters)))
 
+;;; OK, enough of these that they should be combined into a single walk.
+;;; Probably not hard, but annoyingly anti-modular.
+(defn- slider-transform
+  [vspec]
+  (let [params (atom [])
+        munged
+        (walk/prewalk
+         (fn [x]
+           (if-let [[name min max] (and (map? x) (:slider x))]
+             (do (swap! params conj  {:name name
+                                      :value (/ (+ min max) 2)
+                                      :bind {:input "range"
+                                             :min min
+                                             :max max}})
+                 ;; TODO {:mark {:<attribute> {:expr name}}}
+                 (-> x
+                     (dissoc :slider)
+                     (assoc :value {:expr name})))
+             x))
+         vspec)]
+    (update-in munged [:params] concat @params)))
+
 (defmethod vega-spec "encoding_scale" [block]
   (u/merge-recursive
    {:scale {:type (get-in block [:children "scale"]) }}
@@ -207,6 +229,13 @@
              (u/coerce-numeric (get-in block [:children "value"]))}}
    (vega-spec (get-in block [:children :next]))))
 
+;;; Sliders are not really part of encodings, so gets handled in postprocessing
+(defmethod vega-spec "encoding_slider" [block]
+  (merge
+   {:slider [(get-in block [:children "name"])
+             (u/coerce-numeric (get-in block [:children "min"]))
+             (u/coerce-numeric (get-in block [:children "max"]))]}))
+
 (defmethod vega-spec "encoding_aggregate" [block]
   (merge
    {:aggregate (get-in block [:children "aggregate"])}
@@ -226,6 +255,7 @@
         ;; Or don't use walker; or  a smarter walker that can be guided
         filter-transform 
         repeat-transform
+        slider-transform
         ))))
 
 
