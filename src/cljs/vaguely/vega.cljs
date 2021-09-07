@@ -258,16 +258,28 @@
         slider-transform
         ))))
 
+(rf/reg-sub
+ :vega-spec
+ (fn [db _]
+   (try
+     (generate-vega-spec (:compact-all db)) ;Maybe pass :data
+     (catch :default e
+       (rf/dispatch [:error [:spec e]])
+       nil))))
 
 (defn render
   "React component showing the graph"
   []
-  (let [spec @(rf/subscribe [:vega-spec])]
-    (if (empty? spec)
-      "No graph specified"
-      [:div#graph
-       (oz/view-spec [:vega-lite spec])]))
-  )
+  (let [spec @(rf/subscribe [:vega-spec])
+        data @(rf/subscribe [:data])]
+    #_ (prn :render (count spec) (count data))
+    (cond (empty? spec)
+          "No graph specified"
+          (empty? data)
+          "Waiting for data"
+          :else
+          [:div#graph
+           (oz/view-spec [:vega-lite spec])])))
 
 (defn remove-data
   [spec]

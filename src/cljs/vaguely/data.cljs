@@ -44,7 +44,7 @@
   (let [url (get-in block [:children "url"])
         format (get-in block [:children "format"])]
     (rf/dispatch [:get-data-url url format])
-    @(rf/subscribe [:data])             ;not sure this will work
+    @(rf/subscribe [:data])
     ))
   
 (defmethod block-data "infertility" [block]
@@ -64,10 +64,13 @@
  (fn [db [_ url format]]
    ;; TODO Possible Screw case where we change format, need to do update maybe
    (when-not (= (:data-url db) url)
+     (rf/dispatch [:info (str "Reading from " url)])
      (api/ajax-get "/api/data"
                    {:url-params {:url url :format format}
                     :handler (fn [resp]
-                               (rf/dispatch [:set-data (:body resp)]))}))
+                               (let [data (:body resp)]
+                                 (rf/dispatch [:info (str (count data) " records read from " url)])
+                                 (rf/dispatch [:set-data data])))}))
    (assoc db :data-url url)))
 
 (rf/reg-event-db

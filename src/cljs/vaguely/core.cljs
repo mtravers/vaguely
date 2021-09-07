@@ -16,6 +16,8 @@
             (fn [db _]
               (:view db)))
 
+;;; TODO Error/info probably should be unified
+
 (rf/reg-sub :error
             (fn [db _]
               (:error db)))
@@ -25,21 +27,20 @@
  (fn [db [_ error]]
    (assoc db :error error)))
 
+(rf/reg-sub :info
+            (fn [db _]
+              (:info db)))
+
+(rf/reg-event-db
+ :info
+ (fn [db [_ msg]]
+   (assoc db :info msg)))
+
 (rf/reg-event-db
  :open-url
  (fn [db [_ url]]
    (.open js/window url "_blank")
    db))
-
-(defn error
-  []
-  [:div.alert-danger 
-   [:button {:type "button" :title "Close"
-             :class "close"
-             :on-click #(rf/dispatch [:error nil])}
-    [:i {:class "material-icons"} "close"]]
-   [:pre {:style {:white-space "normal"}} ;yes this is how you get wrapping
-    (str @(rf/subscribe [:error]))]])
 
 
 

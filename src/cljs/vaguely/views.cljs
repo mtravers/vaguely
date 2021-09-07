@@ -84,6 +84,14 @@
  (fn [db [_ id tab]]
    (assoc-in db [:active-tab id] tab)))
 
+;;; Special-purpose hack: if user changes blocks, show either graph or spec pane
+(rf/reg-event-db
+ :choose-vega-tab
+ (fn [db [_ id]]
+   (if (contains? #{"Graph" "Spec"} (get-in db [:active-tab id]))
+     db
+     (assoc-in db [:active-tab id] "Graph"))))
+
 (defn tabs
   [id tabs]
   (let [active (or @(rf/subscribe [:active-tab id]) "About")]
@@ -109,9 +117,20 @@
    [:pre {:style {:white-space "normal"}} ;yes this is how you get wrapping
     (str @(rf/subscribe [:error]))]])
 
+(defn info
+  []
+  [:div.alert-info 
+   [:button {:type "button" :title "Close"
+             :class "close"
+             :on-click #(rf/dispatch [:info nil])}
+    [:i {:class "material-icons"} "close"]]
+   (str @(rf/subscribe [:info]))])
+
 (defn rh-pane
   []
   [:div
+   (when @(rf/subscribe [:info])
+     [info])
    (when @(rf/subscribe [:error])
      [error])
    (tabs :rh
