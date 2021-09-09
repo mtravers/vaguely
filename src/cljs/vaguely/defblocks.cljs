@@ -35,8 +35,10 @@
 
 (def layer-color "#9e2a2b")
 (def encoding-color "#407492")
+(def math-color "#3f943f")
 
 ;;; Abstractions for creating encoding attributes
+;;; TODO steal arg building form mrfrieze/src/cljc/mrfrieze/defblocks.cljc
 
 (defn encoding-attribute
   [name]
@@ -58,8 +60,17 @@
 (defn encoding-string-attribute
   [name]
   (-> (encoding-attribute name)
-      (assoc :args0 [{:type "field_input" 
+      (assoc :args0 [{:type "input_value" 
                       :name "value"
+                      :check "String"
+                      }])))
+
+(defn encoding-number-attribute
+  [name]
+  (-> (encoding-attribute name)
+      (assoc :args0 [{:type "input_value" 
+                      :name "value"
+                      :check "Number"
                       }])))
 
 (defn encoding-filter-attribute
@@ -69,25 +80,48 @@
       (assoc :message0 "filter to %1 %2"
              :args0 [{:type "field_dropdown" 
                       :name "operator"
-                      :options '[[< "lt"] [<= "lte"] [= "equals"] [=> "gte"] [> "gt"]]
+                      :options '[[< "lt"] [<= "lte"] [= "equal"] [=> "gte"] [> "gt"]]
                       }
-                     {:type "field_input" 
+                     {:type "input_value"
                       :name "value"
-                      }])))
-
-;;; TODO This is not what you want. Sliders need to be able to slot into filters, eg. But proof the basics work nice.
-(defn encoding-slider
-  [name]
-  (-> (encoding-attribute name)
-      ;; TODO needs a nice abstraction
-      (assoc :message0 "slider %1 [%2, %3]"
-             :args0 [{:type "field_input" 
-                      :name "name"}
-                     {:type "field_input" 
-                      :name "min"}
-                     {:type "field_input" 
-                      :name "max"}
+                      :check "Number"
+                     }
                      ])))
+
+
+;;; Substitute for math_number which has wrong color
+(defn number
+  []
+  {:type "number"
+   :output "Number"
+   :colour math-color
+   :message0 "%1"
+   :args0 [{:type "field_input"
+            :name "NUM"}]})
+
+(defn slider
+  []
+  {:type "slider"
+   :colour math-color
+   :message0 "slider %1 [%2, %3]"
+   :output "Number"
+   :args0 [{:type "field_input" 
+            :name "name"}
+           {:type "field_input" 
+            :name "min"}
+           {:type "field_input" 
+            :name "max"}
+           ]})
+
+(defn expression
+  []
+  {:type "expression"
+   :colour math-color
+   :message0 "expression %1"
+   :output "Number"
+   :args0 [{:type "field_input" 
+            :name "expr"}
+           ]})
 
 (defn graph-blockdefs
   "Visualization blocks"
@@ -114,14 +148,17 @@
 
    {:type "layers"
     :colour layer-color
-    :message0 "layers %1"
-    :args0 [{:type "input_statement"
-             :name "layers"
-             }]
-    :message1 "data %1"
-    :args1 [{:type "input_value"
+
+    :message0 "data %1"
+    :args0 [{:type "input_value"
              :name "data"
              }]
+
+    :message1 "layers %1"
+    :args1 [{:type "input_statement"
+             :name "layers"
+             }]
+
     :message2 "encodings %1"
     :args2 [{:type "input_statement"
              :name "encoding"
@@ -230,16 +267,21 @@
    (encoding-dropdown-attribute "scale"  (options [:linear :log :symlog :pow :sqrt             ;for continuous vars (TODO adjust options). Also :pow requires argument?
                                                    :time :utc]))
 
-   (encoding-string-attribute "value")
+   (encoding-number-attribute "value")
    (encoding-string-attribute "title")
 
    (encoding-filter-attribute "filter")
-   (encoding-slider "slider")
 
-   (encoding-string-attribute "domain_min")
-   (encoding-string-attribute "domain_max")
-   (encoding-string-attribute "range_min")
-   (encoding-string-attribute "range_max")
+   (encoding-number-attribute "domain_min")
+   (encoding-number-attribute "domain_max")
+   (encoding-number-attribute "range_min")
+   (encoding-number-attribute "range_max")
+
+   (encoding-string-attribute "expression")
+
+   (number)
+   (slider)
+   (expression)
 
    (-> (encoding-dropdown-attribute "aggregate" (options aggregates))
        (assoc :message0 "aggregated by %1"))
@@ -272,12 +314,12 @@
 (defmulti default-block (fn [type default] type))
 
 (defmethod default-block :default [type default]
-  [:block "math_number" {} 
+  [:block "number" {} 
    [:field "NUM" default]]
   )
 
 (defmethod default-block :number [type default]
-  [:block "math_number" {} 
+  [:block "number" {} 
    [:field "NUM" default]]
   )
 
@@ -290,7 +332,7 @@
   [:block "text" {}
    [:field "TEXT" default]])
 
-(defn toolbox-item [{:keys [type args] :as grapheme}]
+(defn toolbox-item [{:keys [type args]}]
   `[:block ~(name type) {}
     ~@(mapv (fn [arg]
               (let [{:keys [default type] :as arg} (if (map? arg) arg {:name arg})]
@@ -302,15 +344,16 @@
 
 (def block-map (zipmap (map :type blocks) blocks))
 
-(defn cat-blocks [cat]
-  (mapv toolbox-item (filter #(= cat (:category %)) blocks)))
+(defn num-toolbox
+  [type default]
+  [:block type {} [:value "value" [:block "number" {} [:field "NUM" default]]]]
+  )
 
 (defn toolbox-def
   []
   `[:toolbox
-    [:category "Marks / Layers" {}
+    [:category "Marks / Layers" {:colour ~layer-color}
 
-     [:block "layer"]
      [:block "layer" {}
       ;; For some reason displayed order is inverse
       [:value "encoding" [:block "encoding2" {}
@@ -329,11 +372,13 @@
                           [:value "encoding_attribute" [:block "encoding_field"]]]]
 
       ]
+     [:block "layer"]
+
 
      [:block "layers"]
      [:block "regression_layer"]
      ]
-    [:category "Encodings" {}
+    [:category "Encodings" {:colour ~encoding-color}
 
      [:block "encoding2"]
      [:block "encoding2" {}
@@ -343,19 +388,25 @@
      [:block "encoding_field"]
      [:block "encoding_aggregate"]
      [:block "encoding_scale"]
-     [:block "encoding_value"]
 
-     [:block "encoding_domain_min"]
-     [:block "encoding_domain_max"]
-     [:block "encoding_range_min"]
-     [:block "encoding_range_max"]
+     ~(num-toolbox "encoding_value" 23)
+
+     ~(num-toolbox "encoding_domain_min" 0)
+     ~(num-toolbox "encoding_domain_max" 100)
+     ~(num-toolbox "encoding_range_min" 0)
+     ~(num-toolbox "encoding_range_max" 100)
 
      [:block "encoding_title"]
      [:block "encoding_filter"]
-     [:block "encoding_slider"]
+;     [:block "encoding_slider"]
 
      ]
     ~(data/toolbox)
+    [:category "Numbers" {:colour ~math-color}         
+     [:block "number"]
+     [:block "slider"]
+     [:block "expression"]
+     ]
     [:category "Library" {}
      [:button "Browse" [:browse]]
      [:button "Save" [:save]]]

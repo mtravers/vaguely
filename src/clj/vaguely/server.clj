@@ -20,10 +20,16 @@
       (catch Throwable e
         {:status 500 :headers {} :body {:error (print-str e)}}))))
 
+(defn keyword-param
+  [p]
+  (if (= p "null")
+    nil
+    (keyword p)))
+
 (defn handle-data
   [url format]
   (log/infof "Data request %s" url)
-  (let [data (data/read-file-maps url (keyword format))]
+  (let [data (data/read-file-maps url (keyword-param format))]
     {:status 200
      :headers {}
      :body data}  

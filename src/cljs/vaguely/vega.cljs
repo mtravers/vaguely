@@ -272,14 +272,10 @@
   []
   (let [spec @(rf/subscribe [:vega-spec])
         data @(rf/subscribe [:data])]
-    #_ (prn :render (count spec) (count data))
-    (cond (empty? spec)
-          "No graph specified"
-          (empty? data)
-          "Waiting for data"
-          :else
-          [:div#graph
-           (oz/view-spec [:vega-lite spec])])))
+    (if (or (empty? spec) (empty? data))
+      "Waiting for spec..."
+      [:div#graph
+       (oz/view-spec [:vega-lite spec])])))
 
 (defn remove-data
   [spec]

@@ -27,23 +27,29 @@
    {:type "data-url"
     :output "data"
     :colour data-color
-    :message0 "url %1"
-    :args0 [{:name "url"
+    :message0 "name %1"
+    :args0 [{:name "name"
+             :type "field_input"}]
+    :message1 "url %1"
+    :args1 [{:name "url"
              :type "field_input"
              :spellcheck false}]
-    :message1 "format %1"
-    :args1 [{:name "format"
-             :type "field_dropdown"
-             :options (options [:inferred :csv :tsv :json])}] ;TODO  :excel
+    ;; Hardly ever used; do it another way
+    ;; :message1 "format %1"
+    ;; :args1 [{:name "format"
+    ;;          :type "field_dropdown"
+    ;;          :options (options [:inferred :csv :tsv :json])}] ;TODO  :excel
     }
+   ;; TODO add format-specific blocks "json-data-url" eg
    (canned/blockdefs)))
 
 (defmulti block-data (fn [block] (:type block)))
 
 (defmethod block-data "data-url" [block]
   (let [url (get-in block [:children "url"])
-        format (get-in block [:children "format"])]
-    (rf/dispatch [:get-data-url url format])
+        ;; format (get-in block [:children "format"])
+        ]
+    (rf/dispatch [:get-data-url url])
     @(rf/subscribe [:data])
     ))
   
@@ -97,9 +103,26 @@
             (fn [db _]
               (:data db)))
 
+(defn data-url
+  [name url]
+  [:block "data-url" {}
+   [:field "name" name]
+   [:field "url" url]])
+
+(defn data-urls
+  []
+  (map (partial apply data-url)
+       [["movies" movies]
+        ["gapminder" "https://gist.github.com/justimchung/9e9324667c847d3c8c2f0bdec3c180dd/raw/0299cac8c5cd20a73be8bc3dafbf8e1f15ca6020/gapminder.csv"]
+        ["OWID poverty" "https://raw.githubusercontent.com/owid/owid-datasets/master/datasets/Absolute%20number%20of%20people%20in%20poverty%20-%20OWID%20based%20on%20World%20Bank%20(Povcal)%20(2015)/Absolute%20number%20of%20people%20in%20poverty%20-%20OWID%20based%20on%20World%20Bank%20(Povcal)%20(2015).csv"]
+        ["Cars" "https://vega.github.io/vega-lite/data/cars.json"]
+        ["Seattle Weather" "https://vega.github.io/vega-lite/data/seattle-weather.csv"]
+        ]))
+
 (defn toolbox
   []
-  `[:category "Data" {}
+  `[:category "Data" {:colour ~data-color}
+    ~@(data-urls)
     [:block "data-url" {}
-     [:field "url" ~movies]]
+     ]
     ~@(canned/toolbox)])

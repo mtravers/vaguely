@@ -27,8 +27,6 @@
   (.hide (.getFlyout @bo/workspace))    ;hide the flyout which for some reason gets exposed 
   )
 
-                                        ;TODO thought I fixed this...
-
 (defn update-blockly []
   (bo/define-blocks (defblocks/block-defs))
   (bo/update-toolbox (bo/toolbox (defblocks/toolbox-def))))

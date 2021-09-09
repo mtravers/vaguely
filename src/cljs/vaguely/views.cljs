@@ -119,7 +119,7 @@
 
 (defn info
   []
-  [:div.alert-info 
+  [:div.alert-info.p-1
    [:button {:type "button" :title "Close"
              :class "close"
              :on-click #(rf/dispatch [:info nil])}
