@@ -175,10 +175,28 @@
                  ;; TODO {:mark {:<attribute> {:expr name}}}
                  (-> x
                      (dissoc :slider)
-                     (assoc :value {:expr name})))
+                     (assoc :expr name)))
              x))
          vspec)]
     (update-in munged [:params] concat @params)))
+
+(defn- expression-transform
+  [vspec]
+  (let [transforms (atom [])
+        munged
+        (walk/prewalk
+         (fn [x]
+           (if-let [expression (and (map? x) (:expression x))]
+             (let [ename (name (gensym "exp"))] ;TODO stable
+               (do (swap! transforms conj
+                          {:calculate expression
+                           :as ename})
+                   (-> x
+                       (dissoc :expression)
+                       (assoc :field ename))))
+             x))
+         vspec)]
+    (update-in munged [:transform] concat @transforms)))
 
 (defmethod vega-spec "encoding_scale" [block]
   (u/merge-recursive
@@ -192,7 +210,7 @@
 
 (defmethod vega-spec "encoding_value" [block]
   (merge
-   {:value (u/coerce-numeric (get-in block [:children "value"])) }
+   {:value (vega-spec (get-in block [:children "value"])) }
    (vega-spec (get-in block [:children :next]))))
 
 (defmethod vega-spec "encoding_title" [block]
@@ -204,37 +222,51 @@
 
 (defmethod vega-spec "encoding_domain_min" [block]
   (u/merge-recursive
-   {:scale {:domainMin (u/coerce-numeric (get-in block [:children "value"])) }}
+   {:scale {:domainMin (vega-spec (get-in block [:children "value"])) }}
    (vega-spec (get-in block [:children :next]))))
 
 (defmethod vega-spec "encoding_domain_max" [block]
   (u/merge-recursive
-   {:scale {:domainMax (u/coerce-numeric (get-in block [:children "value"])) }}
+   {:scale {:domainMax (vega-spec (get-in block [:children "value"])) }}
    (vega-spec (get-in block [:children :next]))))
 
 (defmethod vega-spec "encoding_range_min" [block]
   (u/merge-recursive
-   {:scale {:rangeMin (u/coerce-numeric (get-in block [:children "value"])) }}
+   {:scale {:rangeMin (vega-spec (get-in block [:children "value"])) }}
    (vega-spec (get-in block [:children :next]))))
 
 (defmethod vega-spec "encoding_range_max" [block]
   (u/merge-recursive 
-   {:scale {:rangeMax (u/coerce-numeric (get-in block [:children "value"])) }}
+   {:scale {:rangeMax (vega-spec (get-in block [:children "value"])) }}
    (vega-spec (get-in block [:children :next]))))
 
 ;;; Filters are not really part of encodings, so gets handled in postprocessing
 (defmethod vega-spec "encoding_filter" [block]
   (merge
    {:filter {(get-in block [:children "operator"])
-             (u/coerce-numeric (get-in block [:children "value"]))}}
+             (vega-spec (get-in block [:children "value"]))}}
    (vega-spec (get-in block [:children :next]))))
 
+(defmethod vega-spec "number" [block]
+   (u/coerce-numeric (get-in block [:children "NUM"])))
+
 ;;; Sliders are not really part of encodings, so gets handled in postprocessing
+;;; Probably obso
 (defmethod vega-spec "encoding_slider" [block]
-  (merge
    {:slider [(get-in block [:children "name"])
              (u/coerce-numeric (get-in block [:children "min"]))
-             (u/coerce-numeric (get-in block [:children "max"]))]}))
+             (u/coerce-numeric (get-in block [:children "max"]))]})
+
+(defmethod vega-spec "slider" [block]
+  {:slider [(get-in block [:children "name"])
+             (u/coerce-numeric (get-in block [:children "min"]))
+             (u/coerce-numeric (get-in block [:children "max"]))]})
+
+(defmethod vega-spec "expression" [block]
+  {:expression (get-in block [:children "expr"])})
+
+(defmethod vega-spec "encoding_expression" [block]
+  {:expression (get-in block [:children "value"])})
 
 (defmethod vega-spec "encoding_aggregate" [block]
   (merge
@@ -243,7 +275,7 @@
 
 ;;; Terminates recursion down :next chain
 (defmethod vega-spec nil [_block]
-  {})
+  nil)
 
 (defn generate-vega-spec
   [blocks]
@@ -256,6 +288,7 @@
         filter-transform 
         repeat-transform
         slider-transform
+        expression-transform
         ))))
 
 (rf/reg-sub

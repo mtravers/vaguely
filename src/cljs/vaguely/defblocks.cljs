@@ -60,9 +60,8 @@
 (defn encoding-string-attribute
   [name]
   (-> (encoding-attribute name)
-      (assoc :args0 [{:type "input_value" 
+      (assoc :args0 [{:type "field_input" 
                       :name "value"
-                      :check "String"
                       }])))
 
 (defn encoding-number-attribute
@@ -112,6 +111,22 @@
            {:type "field_input" 
             :name "max"}
            ]})
+
+;;; Obso, here so library can loadd
+(defn encoding-slider
+  [name]
+  (-> (encoding-attribute name)
+      ;; TODO needs a nice abstraction
+      (assoc :message0 "slider %1 [%2, %3]"
+            :args0 [{:type "field_input" 
+                      :name "name"}
+                     {:type "field_input" 
+                      :name "min"}
+                     {:type "field_input" 
+                      :name "max"
+                     }
+            ])))
+
 
 (defn expression
   []
@@ -281,7 +296,8 @@
 
    (number)
    (slider)
-   (expression)
+   (encoding-slider "slider")                    ;obso
+   (expression)                                  ;think this doesn't work
 
    (-> (encoding-dropdown-attribute "aggregate" (options aggregates))
        (assoc :message0 "aggregated by %1"))
@@ -398,14 +414,17 @@
 
      [:block "encoding_title"]
      [:block "encoding_filter"]
+     [:block "encoding_expression"]
 ;     [:block "encoding_slider"]
 
      ]
     ~(data/toolbox)
+    ;; TODO Change to values and add color block
     [:category "Numbers" {:colour ~math-color}         
      [:block "number"]
      [:block "slider"]
-     [:block "expression"]
+     ;; Nah
+     #_ [:block "expression"]
      ]
     [:category "Library" {}
      [:button "Browse" [:browse]]
