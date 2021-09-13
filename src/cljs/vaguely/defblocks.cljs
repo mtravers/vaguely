@@ -87,6 +87,19 @@
                      }
                      ])))
 
+(defn encoding-sort-attribute
+  [name]
+  (-> (encoding-attribute name)
+      (assoc :message0 "sort by %1 %2"
+             :args0 [{:type "field_dropdown" 
+                      :name "field"
+                      :options field-options
+                      }
+                     {:type "field_dropdown" 
+                      :name "order"
+                      :options (options ["ascending" "descending"])
+                      }
+                     ])))
 
 ;;; Substitute for math_number which has wrong color
 (defn number
@@ -286,6 +299,7 @@
    (encoding-string-attribute "title")
 
    (encoding-filter-attribute "filter")
+   (encoding-sort-attribute "sort")
 
    (encoding-number-attribute "domain_min")
    (encoding-number-attribute "domain_max")
@@ -414,6 +428,7 @@
 
      [:block "encoding_title"]
      [:block "encoding_filter"]
+     [:block "encoding_sort"]
      [:block "encoding_expression"]
 ;     [:block "encoding_slider"]
 

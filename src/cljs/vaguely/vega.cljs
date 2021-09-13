@@ -247,6 +247,12 @@
              (vega-spec (get-in block [:children "value"]))}}
    (vega-spec (get-in block [:children :next]))))
 
+(defmethod vega-spec "encoding_sort" [block]
+  (merge
+   {:sort {:field (get-in block [:children "field"])
+           :order (get-in block [:children "order"])}}
+   (vega-spec (get-in block [:children :next]))))
+
 (defmethod vega-spec "number" [block]
    (u/coerce-numeric (get-in block [:children "NUM"])))
 
