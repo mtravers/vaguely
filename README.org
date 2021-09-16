@@ -2,7 +2,7 @@
 
 Vaguely is a tool for exploratory data visualization, based on Vega-Lite, a high-level grammar of interactive graphics. Vaguely is a partial translation of that grammar into a Scratch-like blocks interface, making it easier to experiment with different visualizations.
 
-You can use it here: https://vagueness.herokuapp.com/ (warning: may take awhile to start up)
+You can use it here: https://vagueness.herokuapp.com/ 
 
 
 [[file:Screen_Shot_2021-09-04_at_5.39.27_PM.png]]
@@ -24,10 +24,6 @@ lein launch
 #+END_SRC
 
 The library functions won't work unless you set up your own DynamoDB table and credentials.
-
-* Devops
-
-Hosted for now on Heroku free tier.
 
 
 ** Library

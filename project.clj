@@ -112,8 +112,8 @@
      :compiler     {:main            vaguely.core
                     :output-to       "resources/public/js/compiled/app.js"
                     :output-dir      "resources/public/js/compiled/outprod"
-                    ;; TODO :advanced is better but requires special handling for Blockly refs
-                    :optimizations   :advanced
+                    ;; TODO :advanced is better but breaks Library save (see library/workspace-image)
+                    :optimizations   :simple
                     :closure-defines {goog.DEBUG false}
                     :pretty-print    false}}]}
 

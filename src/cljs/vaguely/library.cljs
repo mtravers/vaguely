@@ -882,6 +882,7 @@
 
 (defn workspace-image
   []
+  ;; TODO the .-svgBlockCanvas_ breaks advanced optimization
   (let [canvas (.-svgBlockCanvas_ (.-mainWorkspace js/Blockly))
         cp (.cloneNode canvas true)
         style-elt (.createElementNS js/document "http://www.w3.org/2000/svg" "style")]
