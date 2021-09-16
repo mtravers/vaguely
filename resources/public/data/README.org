@@ -1,0 +1,8 @@
+* Library of datasets
+
+TODO obviously these need descriptive, user-visiable metadata.
+
+
+
+ca-covid-pol.tsv shows relationshipt between covid rates and voting yes on Gavin Newsome recall
+Source: NY Times via https://www.reddit.com/r/dataisbeautiful/comments/pp5kg3/oc_covid_cases_vs_recall_votes_in_california_data/hd1w5te/?utm_source=reddit&utm_medium=web2x&context=3

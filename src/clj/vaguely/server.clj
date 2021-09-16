@@ -6,6 +6,7 @@
             [compojure.route :as route]
             [taoensso.timbre :as log]
             [ring.util.response :as response]
+            [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.defaults :as middleware]
             [ring.middleware.gzip :refer [wrap-gzip]]
             [ring.middleware.format :refer [wrap-restful-format]]))
@@ -59,6 +60,7 @@
   (routes
    (-> (app-routes)
        (middleware/wrap-defaults site-defaults)
+       (wrap-resource "public")
        wrap-exception-handling
        wrap-restful-format
        wrap-gzip

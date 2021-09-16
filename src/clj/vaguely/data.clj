@@ -31,6 +31,7 @@
   (if (empty? head)
     :__id                               
     ;; Vega definitely doesn't like ., not sure about other chars
+    ;; TODO Clojure doesn't like : or / in keywords
     (keyword (str/replace head #"[\.]" "_"))))   ;  ,\(\):
 
 (defn csv-data->maps
