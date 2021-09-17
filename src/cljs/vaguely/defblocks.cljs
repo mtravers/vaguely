@@ -79,7 +79,8 @@
       (assoc :message0 "filter to %1 %2"
              :args0 [{:type "field_dropdown" 
                       :name "operator"
-                      :options '[[< "lt"] [<= "lte"] [= "equal"] [=> "gte"] [> "gt"]]
+                      ;; Vega does not have a ~= predicate, gets transformed in vega/make-filter
+                      :options '[[< "lt"] ["≤" "lte"] [= "equal"] ["≥" "gte"] [> "gt"] ["≠" "~equal"]]
                       }
                      {:type "input_value"
                       :name "value"
@@ -434,9 +435,13 @@
 
      ]
     ~(data/toolbox)
-    ;; TODO Change to values and add color block
-    [:category "Numbers" {:colour ~math-color}         
-     [:block "number"]
+    [:category "Values" {:colour ~math-color}         
+     [:block "number" {} [:field "NUM" 10]]
+     [:block "number" {} [:field "NUM" "string"]] ;yes this works
+     ;; TODO add color block – this doesn't work, has wrong type and color
+     #_
+     [:block "colour_picker" {}
+      [:field "COLOUR" "blue"]]
      [:block "slider"]
      ;; Nah
      #_ [:block "expression"]

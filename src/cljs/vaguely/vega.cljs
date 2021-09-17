@@ -145,6 +145,16 @@
                                :type "nominal"})))}
       vspec)))
 
+(defn- make-filter
+  [x]
+  (let [op (first (keys (:filter x)))]
+    {:filter
+     (if (= op "~equal")
+       {:not {:field (:field x)
+              "equal" (get-in x [:filter "~equal"])}}
+       (merge {:field (:field x)} (:filter x))
+       )}))
+
 (defn- filter-transform
   [vspec]
   (let [filters (atom [])
@@ -152,7 +162,7 @@
         (walk/prewalk
          (fn [x]
            (if-let [r (and (map? x) (:filter x))]
-             (do (swap! filters conj {:filter (merge {:field (:field x)} (:filter x))})
+             (do (swap! filters conj (make-filter x))
                  (dissoc x :filter))
              x))
          vspec)]
