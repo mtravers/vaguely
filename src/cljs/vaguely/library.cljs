@@ -973,6 +973,18 @@
    (get db :library)))
 
 (rf/reg-event-db                        ;reg-event-fx
+ :retrieve-by-uuid
+ (fn [db [_ uuid]]
+   (api/ajax-get "/api/library/get"
+                 {:url-params {:id uuid} ;TODO uuid for consistency
+                  :handler (fn [data]
+                            (rf/dispatch [:retrieve data])
+                            )})
+   db
+   ))
+
+
+(rf/reg-event-db                        ;reg-event-fx
  :retrieve
  (fn [db [_ item]]
    (blockly/restore-from-saved (:blockdef item))
@@ -986,6 +998,7 @@
   [:div.row.litem  {:on-click #(rf/dispatch [:retrieve item])}
    [:div.col
     [:div.ltitle (:name item)]
+;debug    [:div (:uuid item)]
     [:div.litem-c {:dangerouslySetInnerHTML {:__html (:image item)}
                    }]]
    [:div.col

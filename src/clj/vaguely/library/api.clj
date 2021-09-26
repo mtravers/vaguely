@@ -62,11 +62,12 @@
 
 (defn read-item
   [uuid]
-  (dynamo/invoke-with-error
-   :dynamodb
-   {:op :GetItem
-    :request {:TableName table-name
-              :Index uuid}}))
-
-
+  (-> (dynamo/invoke-with-error
+       :dynamodb
+       {:op :GetItem
+        :request {:TableName table-name
+                  :Key {:uuid {:S uuid}}}})
+      :Item
+      dynamo/untag-attributes
+      ))
 
