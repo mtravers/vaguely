@@ -947,10 +947,18 @@
 
      db)))
 
+;;; → promote to utilities
+;;;  window.history.pushState({"html":response.html,"pageTitle":response.pageTitle},"", urlPath)
+(defn set-browser-url
+  [url]
+  (.pushState (.-history js/window)
+              {} "" url))
+
 (rf/reg-event-db
  :saved
- (fn [db [_ response]]                  ;TODO response is not in right format
-   (js/alert "Saved.")                  ;TODO use nicer flash
+ (fn [db [_ {:keys [message uuid] :as _response}]]
+   (set-browser-url (str "index.html?library=" uuid))
+   (rf/dispatch [:info message])
    db))
 
 (rf/reg-event-db
@@ -987,6 +995,7 @@
 (rf/reg-event-db                        ;reg-event-fx
  :retrieve
  (fn [db [_ item]]
+   (set-browser-url (str "index.html?library=" (:uuid item)))
    (blockly/restore-from-saved (:blockdef item))
    (rf/dispatch [:choose-tab :rh "Graph"])
    db

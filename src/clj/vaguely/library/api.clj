@@ -48,17 +48,19 @@
 (defn write-item
   [map]
   (reset! last-item map)
-  (dynamo/invoke-with-error
-   :dynamodb
-   {:op :PutItem
-    :request {:TableName table-name
-              :Item (-> map
-                        add-version
-                        assign-uuid
-                        dynamo/tag-attributes)}})
-  {:status 200
-   :body "{\"message\": \"Saved\"}"     ;this json shouldn't be necessary, but the middleware is failing me
-   :header {}})
+  (let [item (-> map
+                 add-version
+                 assign-uuid
+                 )]
+    (dynamo/invoke-with-error
+     :dynamodb
+     {:op :PutItem
+      :request {:TableName table-name
+                :Item (dynamo/tag-attributes item)}})
+    {:status 200
+     :body {:message "Saved"
+            :uuid (:uuid item)}
+     :header {}}))
 
 (defn read-item
   [uuid]

@@ -59,6 +59,7 @@
 (defn- params-init
   []
   (when-let [library (:library (cljsu/url-params))]
+    ;; TODO this flashes the usual welcome page, which is bad UX, should hide/replace it
     (rf/dispatch [:retrieve-by-uuid library])))
 
 
