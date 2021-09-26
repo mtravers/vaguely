@@ -31,6 +31,7 @@
             }
      :encoding (vega-spec (get-in block [:children "encoding"]))
      ;; The default default is too small...this is not always right but better than nothing
+     ;; TODO these should be settable parameters
      :height default-height
      :width default-width
      :data (when data-block {:values (data/block-data data-block)})

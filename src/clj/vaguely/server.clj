@@ -9,7 +9,9 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.defaults :as middleware]
             [ring.middleware.gzip :refer [wrap-gzip]]
-            [ring.middleware.format :refer [wrap-restful-format]]))
+            [ring.middleware.format :refer [wrap-restful-format]]
+            [ring.middleware.format-response :refer [wrap-restful-response]]
+            ))
 
 (defn wrap-exception-handling
   [handler]
@@ -36,6 +38,18 @@
      :body data}  
   ))
 
+(defn content-response
+  [obj]
+  {:status 200
+   :headers {}
+   :body obj})
+
+(defn data-response
+  [obj]
+  (response/content-type
+   (content-response obj)
+   "application/transit")) ; ?
+
 (defn app-routes
   []
   (routes
@@ -45,8 +59,8 @@
             (GET "/data" [url format]
                  (response/response (handle-data url format)))
             (context "/library" []
-                     (GET "/list" [] (library/list-items))
-                     (GET "/get" [id] (library/read-item id))
+                     (GET "/list" [] (data-response (library/list-items)))
+                     (GET "/get" [id] (data-response (library/read-item id)))
                      (POST "/save" [item] (library/write-item item))))
    (route/not-found "Not Found")))
 
@@ -59,6 +73,7 @@
   []
   (routes
    (-> (app-routes)
+       (wrap-restful-response)
        (middleware/wrap-defaults site-defaults)
        (wrap-resource "public")
        wrap-exception-handling

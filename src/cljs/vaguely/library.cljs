@@ -947,10 +947,18 @@
 
      db)))
 
+;;; → promote to utilities
+;;;  window.history.pushState({"html":response.html,"pageTitle":response.pageTitle},"", urlPath)
+(defn set-browser-url
+  [url]
+  (.pushState (.-history js/window)
+              {} "" url))
+
 (rf/reg-event-db
  :saved
- (fn [db [_ response]]                  ;TODO response is not in right format
-   (js/alert "Saved.")                  ;TODO use nicer flash
+ (fn [db [_ {:keys [message uuid] :as _response}]]
+   (set-browser-url (str "index.html?library=" uuid))
+   (rf/dispatch [:info message])
    db))
 
 (rf/reg-event-db
@@ -973,8 +981,21 @@
    (get db :library)))
 
 (rf/reg-event-db                        ;reg-event-fx
+ :retrieve-by-uuid
+ (fn [db [_ uuid]]
+   (api/ajax-get "/api/library/get"
+                 {:url-params {:id uuid} ;TODO uuid for consistency
+                  :handler (fn [data]
+                            (rf/dispatch [:retrieve data])
+                            )})
+   db
+   ))
+
+
+(rf/reg-event-db                        ;reg-event-fx
  :retrieve
  (fn [db [_ item]]
+   (set-browser-url (str "index.html?library=" (:uuid item)))
    (blockly/restore-from-saved (:blockdef item))
    (rf/dispatch [:choose-tab :rh "Graph"])
    db
@@ -986,6 +1007,7 @@
   [:div.row.litem  {:on-click #(rf/dispatch [:retrieve item])}
    [:div.col
     [:div.ltitle (:name item)]
+;debug    [:div (:uuid item)]
     [:div.litem-c {:dangerouslySetInnerHTML {:__html (:image item)}
                    }]]
    [:div.col
