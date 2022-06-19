@@ -46,7 +46,7 @@
                  [compojure "1.6.1" :exclusions [ring.core ring.codec]]
                  [me.raynes/fs "1.4.6"]
                  [org.clojure/data.json "0.2.6"]
-                 [org.clojure/data.csv "0.1.4"]                  
+                 [org.clojure/data.csv "1.0.1"]                  
 
                  ]
 

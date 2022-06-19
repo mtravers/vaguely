@@ -53,12 +53,12 @@
   (with-open [s (io/reader fname)]
     (json/read s :key-fn csv-coerce-head)))
 
-;;; Fname is really a URL and maybe should be parsed with a proper URL library
 (defn infer-format
-  [fname]
-  (let [filetype (fs/extension fname)]
-    (and filetype
-         (keyword (subs filetype 1)))))
+  [url]
+  (let [path (.getPath (java.net.URI/create url))
+        format (fs/extension path)]
+    (and format
+         (keyword (subs format 1)))))
 
 (defn read-file-maps
   [fname format]

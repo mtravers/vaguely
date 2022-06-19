@@ -13,7 +13,7 @@ You can use it here: https://vagueness.herokuapp.com/
 - Author: [[http://hyperphor.com][Mike Travers]]
 - Support: [[https://parkerici.org][Parker Institute for Cancer Immunotherapy]]
 - Components :[[https://vega.github.io/vega-lite/][Vega-Lite]], [[https://developers.google.com/blockly/][Blockly]], Clojure
-- Copyright © Hyperphor 2021
+- Copyright © Hyperphor 2021-2022
 
 * To run locally
 

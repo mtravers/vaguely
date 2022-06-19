@@ -52,6 +52,7 @@
    (full-screen "drawing")
    {}))
 
+;;; Note: Hiccup sucks for static text with links, almost as bad as HTML... 
 (defn about-pane
   []
   [:div
@@ -68,8 +69,11 @@
     [:li "Author: " [:a {:href "http://hyperphor.com"} "Mike Travers"]]
     [:li "Support: " [:a {:href "https://parkerici.org"} "Parker Institute for Cancer Immunotherapy"]]
     [:li "Source: " [:a {:href "https://github.com/mtravers/vaguely"} "Github"]]
-    [:li "Components: Vega-Lite, Blockly, Clojure"]]
-   [:p "Copyright © Hyperphor 2021"]])
+    [:li "Built with: "
+     [:a {:href "https://vega.github.io/vega-lite/"} "Vega-Lite"] ", "
+     [:a {:href "https://developers.google.com/blockly/"} "Blockly"] ", "
+     "Clojure"]]
+   [:p "Copyright © Hyperphor 2021-2"]])
 
 
 ;;; Should be in some kind of web utils package oh well
