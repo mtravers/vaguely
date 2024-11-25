@@ -73,7 +73,7 @@
      [:a {:href "https://vega.github.io/vega-lite/"} "Vega-Lite"] ", "
      [:a {:href "https://developers.google.com/blockly/"} "Blockly"] ", "
      "Clojure"]]
-   [:p "Copyright © Hyperphor 2021-2"]])
+   [:p "Copyright © Hyperphor 2021-4"]])
 
 
 ;;; Should be in some kind of web utils package oh well
