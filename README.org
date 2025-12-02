@@ -15,6 +15,13 @@ You can use it here: https://vagueness.herokuapp.com/
 - Components :[[https://vega.github.io/vega-lite/][Vega-Lite]], [[https://developers.google.com/blockly/][Blockly]], Clojure
 - Copyright © Hyperphor 2021-2022
 
+* Deployment
+
+#+BEGIN_SRC
+git push heroku
+#+END_SRC
+
+
 * To run locally
 
 This will compile the front end, launch the back end, and open a browser.

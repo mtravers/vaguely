@@ -30,7 +30,7 @@
                  [ring/ring-jetty-adapter "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [compojure "1.6.1" :exclusions [ring.core ring.codec]]
-                 [ring-middleware-format "0.7.4" :exclusions [javax.xml.bind/jaxb-api]]
+                 [ring-middleware-format "0.7.5" :exclusions [javax.xml.bind/jaxb-api]]
                  [bk/ring-gzip "0.3.0"] ;Not actually used yet?
 
                  [com.cognitect.aws/api "0.8.774" :exclusions [org.eclipse.jetty/jetty-http
