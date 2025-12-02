@@ -1,5 +1,5 @@
 (defproject vaguely "0.0.1-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.10.1"]
+  :dependencies [[org.clojure/clojure "1.12.2"]
                  [org.clojure/clojurescript "1.10.520"]
                  [org.parkerici/multitool "0.0.15"]
 
@@ -33,19 +33,19 @@
                  [ring-middleware-format "0.7.4" :exclusions [javax.xml.bind/jaxb-api]]
                  [bk/ring-gzip "0.3.0"] ;Not actually used yet?
 
-                 [com.cognitect.aws/api "LATEST" :exclusions [org.eclipse.jetty/jetty-http
+                 [com.cognitect.aws/api "0.8.774" :exclusions [org.eclipse.jetty/jetty-http
                                                               org.eclipse.jetty/jetty-io
                                                               org.eclipse.jetty/jetty-util]]
 
-                 [com.cognitect.aws/endpoints  "LATEST"]
-                 [com.cognitect.aws/dynamodb "LATEST"]
+                 [com.cognitect.aws/endpoints  "871.2.39.6"]
+                 [com.cognitect.aws/dynamodb "871.2.39.3"]
 
                  ;; Other
 
                  [clj-http "3.12.1"]
                  [compojure "1.6.1" :exclusions [ring.core ring.codec]]
                  [me.raynes/fs "1.4.6"]
-                 [org.clojure/data.json "0.2.6"]
+                 [org.clojure/data.json "2.5.1"]
                  [org.clojure/data.csv "1.0.1"]                  
 
                  ]
