@@ -11,6 +11,7 @@
             [ring.middleware.gzip :refer [wrap-gzip]]
             [ring.middleware.format :refer [wrap-restful-format]]
             [ring.middleware.format-response :refer [wrap-restful-response]]
+            [ring.middleware.content-type :refer [wrap-content-type]]
             ))
 
 (defn wrap-exception-handling
@@ -76,6 +77,7 @@
        (wrap-restful-response)
        (middleware/wrap-defaults site-defaults)
        (wrap-resource "public")
+       wrap-content-type
        wrap-exception-handling
        wrap-restful-format
        wrap-gzip
